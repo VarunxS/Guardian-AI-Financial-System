@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 from typing import Annotated, TypedDict, Any
 from uuid import uuid4
 
@@ -36,8 +37,37 @@ class GuardianState(TypedDict):
 
 
 _memory = SupabaseMemory()
-from rag.vectorstore import GuardianVectorStore
-_vectorstore = GuardianVectorStore()
+_vectorstore = None
+
+
+def _is_low_memory_mode() -> bool:
+    """
+    Render free tier has very limited RAM, so default to the lighter execution
+    path there unless explicitly overridden.
+    """
+    raw = os.getenv("GUARDIAN_LOW_MEMORY_MODE")
+    if raw is not None:
+        return raw.strip().lower() in {"1", "true", "yes", "on"}
+    return bool(os.getenv("RENDER"))
+
+
+def _should_store_hindsight() -> bool:
+    """
+    Hindsight embeddings are useful, but they are one of the heaviest parts of
+    the pipeline. Keep them opt-in on low-memory hosts.
+    """
+    raw = os.getenv("GUARDIAN_ENABLE_HINDSIGHT")
+    if raw is not None:
+        return raw.strip().lower() in {"1", "true", "yes", "on"}
+    return not _is_low_memory_mode()
+
+
+def _get_vectorstore():
+    global _vectorstore
+    if _vectorstore is None:
+        from rag.vectorstore import GuardianVectorStore
+        _vectorstore = GuardianVectorStore()
+    return _vectorstore
 
 
 def _store_hindsight_docs(user_id: str, transactions, findings: list[dict]):
@@ -95,10 +125,10 @@ def _store_hindsight_docs(user_id: str, transactions, findings: list[dict]):
         ]
         for m, amt in sorted_merchants:
             cat_lines.append(f"- {m}: ₹{amt:,.0f}")
-        docs.append(Document(page_content="\n".join(cat_lines), metadata={"user_id": user_id, "type": f"category_{cat}"}))
+    docs.append(Document(page_content="\n".join(cat_lines), metadata={"user_id": user_id, "type": f"category_{cat}"}))
 
     # Store in ChromaDB
-    _vectorstore.add_hindsight_docs(user_id, docs)
+    _get_vectorstore().add_hindsight_docs(user_id, docs)
 
 async def insights_node(state: GuardianState) -> dict:
     try:
@@ -127,7 +157,7 @@ async def reward_node(state: GuardianState) -> dict:
             api_key=state["api_key"],
             provider=state["provider"],
             model_id=state["model_id"],
-            vectorstore=_vectorstore,
+            vectorstore=None,
             exa_api_key=state.get("exa_api_key", "")
         )
         print("[Guardian] Reward Optimiser: Analysis complete.", flush=True)
@@ -179,15 +209,18 @@ async def persist_node(state: GuardianState) -> dict:
             await loop.run_in_executor(None, _memory.save_goal_snapshots, run_id, report["raw"]["scenarios_per_goal"])
         
         # ── Store hindsight documents in ChromaDB for chatbot ──
-        try:
-            txns = deserialise_transactions(state["transactions_json"])
-            if txns:
-                await loop.run_in_executor(
-                    None, _store_hindsight_docs, user_id, txns, all_findings
-                )
-                print(f"[Guardian] Hindsight docs stored in ChromaDB for {user_id}")
-        except Exception as e:
-            logger.warning(f"Hindsight doc storage failed (non-fatal): {e}")
+        if _should_store_hindsight():
+            try:
+                txns = deserialise_transactions(state["transactions_json"])
+                if txns:
+                    await loop.run_in_executor(
+                        None, _store_hindsight_docs, user_id, txns, all_findings
+                    )
+                    print(f"[Guardian] Hindsight docs stored in ChromaDB for {user_id}")
+            except Exception as e:
+                logger.warning(f"Hindsight doc storage failed (non-fatal): {e}")
+        else:
+            print("[Guardian] Hindsight storage skipped in low-memory mode.", flush=True)
         
         print(f"[Guardian] Persistence complete for run {run_id}.")
         return {}
@@ -221,6 +254,17 @@ def _build_graph() -> StateGraph:
 
 _checkpointer = MemorySaver()
 graph = _build_graph().compile(checkpointer=_checkpointer)
+
+
+def _merge_state(state: GuardianState, updates: dict) -> GuardianState:
+    if not updates:
+        return state
+    if updates.get("errors"):
+        state["errors"].extend(updates["errors"])
+    for key, value in updates.items():
+        if key != "errors":
+            state[key] = value
+    return state
 
 
 async def run_guardian(user_id: str, transactions: list[Transaction], api_key: str, provider: str = "google", model_id: str = "gemini-2.5-flash-lite", exa_api_key: str = None, statement_months: int = 1) -> GuardianState:
@@ -260,8 +304,16 @@ async def run_guardian(user_id: str, transactions: list[Transaction], api_key: s
     
     config = {"configurable": {"thread_id": run_id}}
     
-    print(f"[Guardian] Invoking 3 AI Agents in parallel (Provider: {provider})...")
-    final_state = await graph.ainvoke(initial_state, config=config)
+    if _is_low_memory_mode():
+        print("[Guardian] Low-memory mode enabled. Running agents sequentially.", flush=True)
+        final_state = dict(initial_state)
+        final_state = _merge_state(final_state, await insights_node(final_state))
+        final_state = _merge_state(final_state, await reward_node(final_state))
+        final_state = _merge_state(final_state, await budget_goals_node(final_state))
+        final_state = _merge_state(final_state, await persist_node(final_state))
+    else:
+        print(f"[Guardian] Invoking 3 AI Agents in parallel (Provider: {provider})...")
+        final_state = await graph.ainvoke(initial_state, config=config)
     
     if final_state.get("errors"):
         print(f"[Guardian] Run completed with errors: {final_state['errors']}")

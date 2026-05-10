@@ -85,7 +85,12 @@ async def ask(request: AskRequest):
         provider = request.provider or detected_provider
         model_id = request.model_id or ("gpt-4o-mini" if provider == "openai" else "gemini-2.5-flash-lite")
 
-        config = await _memory.get_provider_config(request.user_id)
+        try:
+            config = await _memory.get_provider_config(request.user_id)
+        except Exception as e:
+            logger.warning(f"Provider config lookup failed for {request.user_id}: {e}")
+            config = None
+
         if config:
             if not api_key:
                 api_key = config["api_key"]
@@ -312,7 +317,12 @@ async def card_recommend(request: CardRecommendRequest):
         model_id = "gemini-2.5-flash-lite"
         api_key = request.api_key
 
-        config = await _memory.get_provider_config(request.user_id)
+        try:
+            config = await _memory.get_provider_config(request.user_id)
+        except Exception as e:
+            logger.warning(f"Provider config lookup failed for {request.user_id}: {e}")
+            config = None
+
         if config:
             if not api_key:
                 api_key = config["api_key"]
@@ -377,7 +387,12 @@ async def generate_hindsight(run_id: str, request: HindsightRequest):
         model_id = "gemini-2.5-flash-lite"
         api_key = request.api_key
 
-        config = await _memory.get_provider_config(request.user_id)
+        try:
+            config = await _memory.get_provider_config(request.user_id)
+        except Exception as e:
+            logger.warning(f"Provider config lookup failed for {request.user_id}: {e}")
+            config = None
+
         if config:
             if not api_key:
                 api_key = config["api_key"]
@@ -506,4 +521,3 @@ async def explore_card(request: CardExploreRequest):
         "live_offers": live_results,
         "exa_available": _exa.is_available,
     }
-

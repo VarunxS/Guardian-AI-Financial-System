@@ -10,6 +10,13 @@ from langchain_core.messages import HumanMessage
 router = APIRouter(tags=["Settings"])
 _memory = SupabaseMemory()
 
+
+def _storage_error_message() -> str:
+    return (
+        "Backend storage is not configured. Set SUPABASE_URL and SUPABASE_KEY "
+        "on the Render backend service."
+    )
+
 class ProviderConfigRequest(BaseModel):
     user_id: str
     provider: str
@@ -28,6 +35,9 @@ async def get_providers():
 
 @router.get("/settings/config/{user_id}")
 async def get_config(user_id: str):
+    if not _memory.is_connected:
+        return {"configured": False, "db_error": _storage_error_message()}
+
     try:
         config = await _memory.get_provider_config(user_id)
         if not config:
@@ -43,6 +53,9 @@ async def get_config(user_id: str):
 
 @router.post("/settings/config")
 async def save_config(req: ProviderConfigRequest):
+    if not _memory.is_connected:
+        raise HTTPException(status_code=500, detail=_storage_error_message())
+
     try:
         await _memory.save_provider_config(
             user_id=req.user_id,

@@ -65,7 +65,12 @@ async def analyse_statement(
     model_id = "gemini-2.5-flash-lite"
     exa_api_key = settings.exa_api_key
 
-    config = await _memory.get_provider_config(user_id)
+    try:
+        config = await _memory.get_provider_config(user_id)
+    except Exception as e:
+        logger.warning(f"Provider config lookup failed for {user_id}: {e}")
+        config = None
+
     if config:
         if not api_key:
             api_key = config["api_key"]
@@ -96,14 +101,19 @@ async def analyse_statement(
 
     try:
         # Parse the statement
-        upload = _parser.parse(
-            file_path=tmp_path, 
-            source=source, 
-            user_id=user_id, 
-            api_key=api_key,
-            provider=provider,
-            model_id=model_id
+        logger.info(f"[Guardian] Parsing statement for user {user_id} (source={source})")
+        upload = await asyncio.get_event_loop().run_in_executor(
+            None,
+            lambda: _parser.parse(
+                file_path=tmp_path,
+                source=source,
+                user_id=user_id,
+                api_key=api_key,
+                provider=provider,
+                model_id=model_id
+            )
         )
+        logger.info(f"[Guardian] Parsed {len(upload.transactions)} transactions for user {user_id}")
 
         if not upload.transactions:
             raise HTTPException(

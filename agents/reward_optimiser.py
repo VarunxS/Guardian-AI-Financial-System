@@ -292,10 +292,13 @@ No markdown. No commentary. Valid JSON only."""
     try:
         from agents.llm_factory import create_llm
         llm = create_llm(api_key, provider, model_id)
-        response = llm.invoke([
-            SystemMessage(content=system),
-            HumanMessage(content=human)
-        ])
+        response = await asyncio.to_thread(
+            llm.invoke,
+            [
+                SystemMessage(content=system),
+                HumanMessage(content=human)
+            ]
+        )
 
         text = response.content.strip()
         match = re.search(r"\{.*\}", text, re.DOTALL)
