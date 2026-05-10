@@ -27,4 +27,4 @@ COPY . .
 EXPOSE 8000
 
 # Start command using the shell form to ensure $PORT is expanded correctly by Render
-CMD sh -c "gunicorn -w 1 -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:$PORT"
+CMD sh -c "gunicorn -w 1 -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:$PORT --timeout 120"
