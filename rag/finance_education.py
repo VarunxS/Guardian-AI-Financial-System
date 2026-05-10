@@ -6,7 +6,8 @@ the guardian_education ChromaDB collection.
 import logging
 
 from agents.llm_factory import create_llm
-from langchain.chains import RetrievalQA
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
 
 from rag.vectorstore import GuardianVectorStore
@@ -33,44 +34,39 @@ class FinanceEducationRAG:
     def answer(self, question: str, api_key: str, provider: str = "google", model_id: str = "gemini-2.5-flash-lite") -> dict:
         """
         Answer a personal finance education question using RAG.
-
-        Args:
-            question: User's finance question
-            api_key: User's OpenAI API key (BYOK)
-            provider: AI provider (google, openai, etc.)
-            model_id: Specific model to use
-
-        Returns:
-            Dict with answer and topics covered
         """
         try:
+            # Build the chain with LCEL (LangChain 0.3 compatible)
             llm = create_llm(api_key, provider, model_id, temperature=0.4)
             retriever = self._vectorstore.get_education_retriever(k=4)
 
-            prompt = PromptTemplate(
-                template=EDUCATION_SYSTEM_PROMPT,
-                input_variables=["context", "question"],
+            prompt = PromptTemplate.from_template(EDUCATION_SYSTEM_PROMPT)
+
+            def format_docs(docs):
+                return "\n\n".join(doc.page_content for doc in docs)
+
+            # Retrieve source documents first
+            source_documents = retriever.invoke(question)
+            
+            # Run the chain manually for maximum compatibility
+            chain = (
+                {"context": lambda x: format_docs(source_documents), "question": RunnablePassthrough()}
+                | prompt
+                | llm
+                | StrOutputParser()
             )
 
-            chain = RetrievalQA.from_chain_type(
-                llm=llm,
-                chain_type="stuff",
-                retriever=retriever,
-                return_source_documents=True,
-                chain_type_kwargs={"prompt": prompt},
-            )
-
-            result = chain.invoke({"query": question})
+            answer = chain.invoke(question)
 
             # Extract topics from source documents
             topics = list({
                 doc.page_content.split("\n")[0].strip("# ").strip()
-                for doc in result.get("source_documents", [])
+                for doc in source_documents
                 if doc.page_content.strip()
             })
 
             return {
-                "answer": result.get("result", "No answer generated."),
+                "answer": answer,
                 "topics_covered": topics[:5],  # limit to 5 topics
             }
 
