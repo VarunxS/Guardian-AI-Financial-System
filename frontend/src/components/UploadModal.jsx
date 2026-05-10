@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { getUserId } from '../utils/auth';
 import { API_BASE_URL } from '../config';
 
 export default function UploadModal({ isOpen, onClose }) {
+  const navigate = useNavigate();
   const [file, setFile] = useState(null);
   const [source, setSource] = useState('bank_csv');
   const [statementMonths, setStatementMonths] = useState(1);
@@ -324,7 +325,10 @@ export default function UploadModal({ isOpen, onClose }) {
                 </div>
               </div>
               <button 
-                onClick={() => { onClose(); window.location.reload(); }} 
+                onClick={() => {
+                  onClose();
+                  navigate('/dashboard');
+                }}
                 className="w-full h-14 bg-bg-subtle border border-border-light hover:bg-bg-hover text-text-ink font-bold rounded-2xl transition-all text-[15px] shadow-soft mt-6"
               >
                 Enter Analysis Console

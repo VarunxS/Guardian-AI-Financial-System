@@ -471,7 +471,7 @@ export default function Dashboard() {
           </Link>
 
           {/* Chatbot Teaser */}
-          <Link to="/chat" className="bg-bg-surface border border-border-light rounded-[24px] p-6 shadow-soft hover:shadow-card hover:border-[#0A66C2]/40 transition-all group flex flex-col justify-between min-h-[220px]">
+          <Link to="/ask" className="bg-bg-surface border border-border-light rounded-[24px] p-6 shadow-soft hover:shadow-card hover:border-[#0A66C2]/40 transition-all group flex flex-col justify-between min-h-[220px]">
             <div>
               <div className="w-10 h-10 rounded-xl bg-[#0A66C2]/10 text-[#0A66C2] flex items-center justify-center mb-4">
                 <span className="material-symbols-outlined fill-1">chat_bubble</span>
