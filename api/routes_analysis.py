@@ -49,7 +49,8 @@ async def analyse_statement(
     if use_sample:
         source = "credit_card_pdf"
         statement_months = 6
-        tmp_path = "/Users/varunsingla/Downloads/AI AGENTS/Guardian/sample_data/transaction_history_6months.pdf"
+        # Use relative path so it works both locally and on Render
+        tmp_path = os.path.join(os.getcwd(), "sample_data", "transaction_history_6months.pdf")
     else:
         if not file:
             raise HTTPException(status_code=400, detail="No file uploaded.")
