@@ -1,0 +1,969 @@
+{
+  "hdfc_infinia": {
+    "name": "HDFC Infinia",
+    "issuer": "HDFC Bank",
+    "tier": "super_premium",
+    "annual_fee": 12500,
+    "joining_fee": 12500,
+    "fee_waiver_spend": 1000000,
+    "reward_rate_base": 3.3,
+    "reward_type": "Reward Points",
+    "reward_rate_per_category": {
+      "travel": 10,
+      "dining": 5,
+      "shopping": 3.3,
+      "fuel": 1,
+      "groceries": 3.3,
+      "entertainment": 3.3,
+      "streaming": 3.3
+    },
+    "milestone_benefits": [
+      {
+        "spend_threshold": 800000,
+        "benefit": "Complimentary flight ticket worth ₹5,000"
+      },
+      {
+        "spend_threshold": 1000000,
+        "benefit": "Unlimited airport lounge visits"
+      }
+    ],
+    "lounge_access": {
+      "domestic": "unlimited",
+      "international": "6/year",
+      "program": "Priority Pass + Visa Infinite"
+    },
+    "joining_bonus": "10,000 reward points on first spend",
+    "forex_markup": 2.0,
+    "fuel_surcharge_waiver": "1% up to ₹250/month",
+    "insurance": [
+      "Air accident: ₹2 Cr",
+      "Lost card: ₹5L"
+    ],
+    "redemption_options": [
+      "Flights",
+      "Hotels",
+      "Amazon vouchers",
+      "Product catalog"
+    ],
+    "best_for": [
+      "travel",
+      "dining"
+    ],
+    "card_network": "Visa Infinite",
+    "eligibility": "Income ₹30L+ or invitation",
+    "description": "HDFC's flagship super-premium card with highest travel rewards and unlimited lounge access.",
+    "image_url": "/assets/cards/hdfc_infinia.png",
+    "expiry_policy": "varies"
+  },
+  "hdfc_diners_black": {
+    "name": "HDFC Diners Club Black Metal",
+    "issuer": "HDFC Bank",
+    "tier": "super_premium",
+    "annual_fee": 10000,
+    "joining_fee": 10000,
+    "fee_waiver_spend": 500000,
+    "reward_rate_base": 3.33,
+    "reward_type": "Reward Points",
+    "reward_rate_per_category": {
+      "travel": 10,
+      "dining": 6.66,
+      "shopping": 3.33,
+      "fuel": 1,
+      "groceries": 3.33,
+      "entertainment": 3.33,
+      "streaming": 3.33
+    },
+    "milestone_benefits": [
+      {
+        "spend_threshold": 400000,
+        "benefit": "Bonus 10,000 reward points"
+      }
+    ],
+    "lounge_access": {
+      "domestic": "unlimited",
+      "international": "unlimited",
+      "program": "Diners Club"
+    },
+    "joining_bonus": "Welcome vouchers worth ₹5,000",
+    "forex_markup": 3.5,
+    "fuel_surcharge_waiver": "1% up to ₹250/month",
+    "insurance": [
+      "Air accident: ₹1 Cr"
+    ],
+    "redemption_options": [
+      "Flights",
+      "Hotels",
+      "SmartBuy deals"
+    ],
+    "best_for": [
+      "travel",
+      "premium lifestyle"
+    ],
+    "card_network": "Diners Club",
+    "eligibility": "Income ₹15L+",
+    "description": "Metal edition premium card with best dining rates and unlimited international lounge.",
+    "image_url": "/assets/cards/hdfc_diners_black.png",
+    "expiry_policy": "varies"
+  },
+  "hdfc_regalia_gold": {
+    "name": "HDFC Regalia Gold",
+    "issuer": "HDFC Bank",
+    "tier": "premium",
+    "annual_fee": 2500,
+    "joining_fee": 2500,
+    "fee_waiver_spend": 500000,
+    "reward_rate_base": 1.33,
+    "reward_type": "Reward Points",
+    "reward_rate_per_category": {
+      "travel": 5,
+      "dining": 4,
+      "shopping": 2.66,
+      "fuel": 1,
+      "groceries": 1.33,
+      "entertainment": 2,
+      "streaming": 1.33
+    },
+    "milestone_benefits": [
+      {
+        "spend_threshold": 500000,
+        "benefit": "Annual fee waiver + flight voucher"
+      }
+    ],
+    "lounge_access": {
+      "domestic": "8/year",
+      "international": "2/year",
+      "program": "Visa Signature"
+    },
+    "joining_bonus": "2,500 welcome points",
+    "forex_markup": 2.0,
+    "fuel_surcharge_waiver": "1% up to ₹250/month",
+    "insurance": [
+      "Air accident: ₹50L"
+    ],
+    "redemption_options": [
+      "Flights",
+      "Hotels",
+      "Products"
+    ],
+    "best_for": [
+      "travel",
+      "dining"
+    ],
+    "card_network": "Visa Signature",
+    "eligibility": "Income ₹6L+",
+    "description": "Mid-premium card with solid travel rates and accessible annual fee.",
+    "image_url": "/assets/cards/hdfc_regalia_gold.png",
+    "expiry_policy": "varies"
+  },
+  "hdfc_millennia": {
+    "name": "HDFC Millennia",
+    "issuer": "HDFC Bank",
+    "tier": "entry",
+    "annual_fee": 1000,
+    "joining_fee": 1000,
+    "fee_waiver_spend": 100000,
+    "reward_rate_base": 1.0,
+    "reward_type": "CashPoints",
+    "reward_rate_per_category": {
+      "travel": 5,
+      "dining": 5,
+      "shopping": 5,
+      "fuel": 1,
+      "groceries": 1,
+      "entertainment": 5,
+      "streaming": 5
+    },
+    "milestone_benefits": [
+      {
+        "spend_threshold": 100000,
+        "benefit": "Annual fee waiver"
+      }
+    ],
+    "lounge_access": {
+      "domestic": "4/year",
+      "international": "0",
+      "program": "Visa Signature"
+    },
+    "joining_bonus": "1,000 CashPoints on activation",
+    "forex_markup": 2.0,
+    "fuel_surcharge_waiver": "1% up to ₹250/month",
+    "insurance": [],
+    "redemption_options": [
+      "Amazon",
+      "Flipkart vouchers",
+      "CashPoints"
+    ],
+    "best_for": [
+      "online spending",
+      "entry level"
+    ],
+    "card_network": "Visa Signature",
+    "eligibility": "Income ₹3L+",
+    "description": "Entry-level card with 5% cashback on online spends via PayZapp/SmartBuy.",
+    "image_url": "/assets/cards/hdfc_millennia.png",
+    "expiry_policy": "varies"
+  },
+  "hdfc_swiggy": {
+    "name": "HDFC Swiggy Credit Card",
+    "issuer": "HDFC Bank",
+    "tier": "mid_range",
+    "annual_fee": 500,
+    "joining_fee": 500,
+    "fee_waiver_spend": 200000,
+    "reward_rate_base": 1.0,
+    "reward_type": "Cashback",
+    "reward_rate_per_category": {
+      "travel": 1,
+      "dining": 10,
+      "shopping": 1,
+      "fuel": 1,
+      "groceries": 1,
+      "entertainment": 1,
+      "streaming": 1
+    },
+    "milestone_benefits": [
+      {
+        "spend_threshold": 200000,
+        "benefit": "Annual fee waiver"
+      }
+    ],
+    "lounge_access": {
+      "domestic": "2/year",
+      "international": "0",
+      "program": "Visa Classic"
+    },
+    "joining_bonus": "10% cashback on Swiggy for first 3 months",
+    "forex_markup": 0,
+    "fuel_surcharge_waiver": "None",
+    "insurance": [],
+    "redemption_options": [
+      "Direct cashback"
+    ],
+    "best_for": [
+      "food delivery",
+      "dining"
+    ],
+    "card_network": "Visa Classic",
+    "eligibility": "Income ₹2.5L+",
+    "description": "Best card for Swiggy and food delivery with 10% cashback on dining orders.",
+    "image_url": "/assets/cards/hdfc_swiggy.png",
+    "expiry_policy": "varies"
+  },
+  "hdfc_tata_neu": {
+    "name": "HDFC Tata Neu Plus",
+    "issuer": "HDFC Bank",
+    "tier": "mid_range",
+    "annual_fee": 1499,
+    "joining_fee": 499,
+    "fee_waiver_spend": 200000,
+    "reward_rate_base": 1.5,
+    "reward_type": "NeuCoins",
+    "reward_rate_per_category": {
+      "travel": 2,
+      "dining": 5,
+      "shopping": 5,
+      "fuel": 1,
+      "groceries": 5,
+      "entertainment": 2,
+      "streaming": 2
+    },
+    "milestone_benefits": [
+      {
+        "spend_threshold": 200000,
+        "benefit": "Annual fee reversal"
+      }
+    ],
+    "lounge_access": {
+      "domestic": "4/year",
+      "international": "0",
+      "program": "Visa Classic"
+    },
+    "joining_bonus": "500 NeuCoins on first spend",
+    "forex_markup": 2.0,
+    "fuel_surcharge_waiver": "None",
+    "insurance": [],
+    "redemption_options": [
+      "Tata ecosystem",
+      "Croma",
+      "BigBasket",
+      "1MG"
+    ],
+    "best_for": [
+      "Tata ecosystem",
+      "groceries"
+    ],
+    "card_network": "Visa Classic",
+    "eligibility": "Income ₹3L+",
+    "description": "Best for Tata ecosystem spenders — BigBasket, Croma, 1MG, Tata CLiQ.",
+    "image_url": "/assets/cards/hdfc_tata_neu.png",
+    "expiry_policy": "varies"
+  },
+  "axis_atlas": {
+    "name": "Axis Atlas",
+    "issuer": "Axis Bank",
+    "tier": "premium",
+    "annual_fee": 5000,
+    "joining_fee": 5000,
+    "fee_waiver_spend": 750000,
+    "reward_rate_base": 2.0,
+    "reward_type": "EDGE Miles",
+    "reward_rate_per_category": {
+      "travel": 5,
+      "dining": 3,
+      "shopping": 2,
+      "fuel": 1,
+      "groceries": 2,
+      "entertainment": 2,
+      "streaming": 2
+    },
+    "milestone_benefits": [
+      {
+        "spend_threshold": 750000,
+        "benefit": "Annual fee reversal + 5,000 bonus EDGE Miles"
+      }
+    ],
+    "lounge_access": {
+      "domestic": "8/year",
+      "international": "4/year",
+      "program": "Visa Signature"
+    },
+    "joining_bonus": "5,000 EDGE Miles on first spend",
+    "forex_markup": 2.0,
+    "fuel_surcharge_waiver": "1% up to ₹200/month",
+    "insurance": [
+      "Air accident: ₹50L"
+    ],
+    "redemption_options": [
+      "Flights",
+      "Hotels",
+      "EDGE Miles transfer"
+    ],
+    "best_for": [
+      "travel"
+    ],
+    "card_network": "Visa Signature",
+    "eligibility": "Income ₹6L+",
+    "description": "Travel-focused card with EDGE Miles that never expire and strong transfer partners.",
+    "image_url": "/assets/cards/axis_atlas.png",
+    "expiry_policy": "varies"
+  },
+  "axis_ace": {
+    "name": "Axis ACE",
+    "issuer": "Axis Bank",
+    "tier": "entry",
+    "annual_fee": 499,
+    "joining_fee": 499,
+    "fee_waiver_spend": 200000,
+    "reward_rate_base": 1.5,
+    "reward_type": "Cashback",
+    "reward_rate_per_category": {
+      "travel": 2,
+      "dining": 4,
+      "shopping": 5,
+      "fuel": 1,
+      "groceries": 5,
+      "entertainment": 2,
+      "streaming": 2
+    },
+    "milestone_benefits": [
+      {
+        "spend_threshold": 200000,
+        "benefit": "Annual fee waiver"
+      }
+    ],
+    "lounge_access": {
+      "domestic": "0",
+      "international": "0",
+      "program": "Visa Signature"
+    },
+    "joining_bonus": "₹500 Amazon voucher",
+    "forex_markup": 2.0,
+    "fuel_surcharge_waiver": "None",
+    "insurance": [],
+    "redemption_options": [
+      "Direct cashback"
+    ],
+    "best_for": [
+      "online shopping",
+      "utility bills"
+    ],
+    "card_network": "Visa Signature",
+    "eligibility": "Income ₹3L+",
+    "description": "Best entry-level cashback card — 5% on bill payments via Google Pay.",
+    "image_url": "/assets/cards/axis_ace.png",
+    "expiry_policy": "varies"
+  },
+  "axis_flipkart": {
+    "name": "Axis Flipkart Credit Card",
+    "issuer": "Axis Bank",
+    "tier": "entry",
+    "annual_fee": 500,
+    "joining_fee": 500,
+    "fee_waiver_spend": 200000,
+    "reward_rate_base": 1.5,
+    "reward_type": "Cashback",
+    "reward_rate_per_category": {
+      "travel": 1,
+      "dining": 4,
+      "shopping": 5,
+      "fuel": 1,
+      "groceries": 4,
+      "entertainment": 4,
+      "streaming": 4
+    },
+    "milestone_benefits": [
+      {
+        "spend_threshold": 200000,
+        "benefit": "Annual fee reversal"
+      }
+    ],
+    "lounge_access": {
+      "domestic": "4/year",
+      "international": "0",
+      "program": "Visa Classic"
+    },
+    "joining_bonus": "₹500 Flipkart voucher",
+    "forex_markup": 0,
+    "fuel_surcharge_waiver": "None",
+    "insurance": [],
+    "redemption_options": [
+      "Flipkart SuperCoins",
+      "Direct cashback"
+    ],
+    "best_for": [
+      "Flipkart shopping",
+      "preferred partners"
+    ],
+    "card_network": "Visa Classic",
+    "eligibility": "Income ₹2.5L+",
+    "description": "Co-branded Flipkart card with 5% unlimited cashback on Flipkart and Myntra.",
+    "image_url": "/assets/cards/axis_flipkart.png",
+    "expiry_policy": "varies"
+  },
+  "axis_reserve": {
+    "name": "Axis Reserve",
+    "issuer": "Axis Bank",
+    "tier": "super_premium",
+    "annual_fee": 50000,
+    "joining_fee": 50000,
+    "fee_waiver_spend": 0,
+    "reward_rate_base": 1.5,
+    "reward_type": "EDGE Reward Points",
+    "reward_rate_per_category": {
+      "travel": 5,
+      "dining": 5,
+      "shopping": 3,
+      "fuel": 1.5,
+      "groceries": 1.5,
+      "entertainment": 3,
+      "streaming": 3
+    },
+    "milestone_benefits": [
+      {
+        "spend_threshold": 100000,
+        "benefit": "1.2 Lakh welcome bonus points"
+      }
+    ],
+    "lounge_access": {
+      "domestic": "unlimited",
+      "international": "unlimited",
+      "program": "Priority Pass"
+    },
+    "joining_bonus": "1,20,000 EDGE Reward Points",
+    "forex_markup": 0,
+    "fuel_surcharge_waiver": "2% forex markup waiver on intl",
+    "insurance": [
+      "Air accident: ₹3 Cr",
+      "Purchase protection: ₹5L"
+    ],
+    "redemption_options": [
+      "Flights",
+      "Hotels",
+      "Taj stays",
+      "Products"
+    ],
+    "best_for": [
+      "premium travel",
+      "luxury"
+    ],
+    "card_network": "Visa Infinite",
+    "eligibility": "Income ₹50L+ or invitation",
+    "description": "Axis's ultra-premium card with unlimited worldwide lounge and zero forex markup.",
+    "image_url": "/assets/cards/axis_reserve.png",
+    "expiry_policy": "varies"
+  },
+  "amex_platinum_travel": {
+    "name": "Amex Platinum Travel",
+    "issuer": "American Express",
+    "tier": "mid_range",
+    "annual_fee": 3500,
+    "joining_fee": 3500,
+    "fee_waiver_spend": 190000,
+    "reward_rate_base": 1.0,
+    "reward_type": "Membership Rewards",
+    "reward_rate_per_category": {
+      "travel": 5,
+      "dining": 3,
+      "shopping": 1,
+      "fuel": 1.5,
+      "groceries": 1,
+      "entertainment": 2,
+      "streaming": 1
+    },
+    "milestone_benefits": [
+      {
+        "spend_threshold": 190000,
+        "benefit": "Annual fee reversal"
+      },
+      {
+        "spend_threshold": 400000,
+        "benefit": "Taj voucher worth ₹10,000"
+      }
+    ],
+    "lounge_access": {
+      "domestic": "4/year",
+      "international": "0",
+      "program": "Amex Lounge"
+    },
+    "joining_bonus": "1,000 bonus MR points",
+    "forex_markup": 3.5,
+    "fuel_surcharge_waiver": "1% up to ₹200/month",
+    "insurance": [
+      "Air accident: ₹50L"
+    ],
+    "redemption_options": [
+      "Flights",
+      "Amazon",
+      "Flipkart",
+      "Uber"
+    ],
+    "best_for": [
+      "travel",
+      "dining"
+    ],
+    "card_network": "Amex",
+    "eligibility": "Income ₹4.5L+",
+    "description": "Best Amex entry card with strong travel rewards and low annual fee.",
+    "image_url": "/assets/cards/amex_platinum_travel.png",
+    "expiry_policy": "varies"
+  },
+  "amex_smartearn": {
+    "name": "Amex SmartEarn",
+    "issuer": "American Express",
+    "tier": "entry",
+    "annual_fee": 495,
+    "joining_fee": 0,
+    "fee_waiver_spend": 40000,
+    "reward_rate_base": 1.0,
+    "reward_type": "Membership Rewards",
+    "reward_rate_per_category": {
+      "travel": 1,
+      "dining": 5,
+      "shopping": 5,
+      "fuel": 1,
+      "groceries": 5,
+      "entertainment": 5,
+      "streaming": 5
+    },
+    "milestone_benefits": [
+      {
+        "spend_threshold": 40000,
+        "benefit": "Annual fee waiver"
+      }
+    ],
+    "lounge_access": {
+      "domestic": "0",
+      "international": "0",
+      "program": "None"
+    },
+    "joining_bonus": "10X MR points on first 3 months",
+    "forex_markup": 3.5,
+    "fuel_surcharge_waiver": "None",
+    "insurance": [],
+    "redemption_options": [
+      "Amazon",
+      "Flipkart",
+      "Uber",
+      "Swiggy vouchers"
+    ],
+    "best_for": [
+      "online shopping",
+      "food delivery"
+    ],
+    "card_network": "Amex",
+    "eligibility": "Income ₹3L+",
+    "description": "Entry-level Amex with 10X rewards at Swiggy, Amazon, Flipkart, Uber, BookMyShow.",
+    "image_url": "/assets/cards/amex_smartearn.png",
+    "expiry_policy": "varies"
+  },
+  "sbi_cashback": {
+    "name": "SBI Cashback",
+    "issuer": "SBI Card",
+    "tier": "mid_range",
+    "annual_fee": 999,
+    "joining_fee": 999,
+    "fee_waiver_spend": 200000,
+    "reward_rate_base": 1.0,
+    "reward_type": "Cashback",
+    "reward_rate_per_category": {
+      "travel": 1,
+      "dining": 1,
+      "shopping": 5,
+      "fuel": 1,
+      "groceries": 5,
+      "entertainment": 1,
+      "streaming": 5
+    },
+    "milestone_benefits": [
+      {
+        "spend_threshold": 200000,
+        "benefit": "Annual fee reversal"
+      }
+    ],
+    "lounge_access": {
+      "domestic": "0",
+      "international": "0",
+      "program": "None"
+    },
+    "joining_bonus": "None",
+    "forex_markup": 3.5,
+    "fuel_surcharge_waiver": "None",
+    "insurance": [],
+    "redemption_options": [
+      "Direct cashback to statement"
+    ],
+    "best_for": [
+      "online shopping",
+      "groceries"
+    ],
+    "card_network": "Visa",
+    "eligibility": "Income ₹3L+",
+    "description": "Flat 5% unlimited cashback on online spending — no categories to track.",
+    "image_url": "/assets/cards/sbi_cashback.png",
+    "expiry_policy": "varies"
+  },
+  "sbi_simplyclick": {
+    "name": "SBI SimplyCLICK",
+    "issuer": "SBI Card",
+    "tier": "entry",
+    "annual_fee": 499,
+    "joining_fee": 499,
+    "fee_waiver_spend": 100000,
+    "reward_rate_base": 0.5,
+    "reward_type": "Reward Points",
+    "reward_rate_per_category": {
+      "travel": 1,
+      "dining": 1,
+      "shopping": 5,
+      "fuel": 1,
+      "groceries": 2.5,
+      "entertainment": 2.5,
+      "streaming": 2.5
+    },
+    "milestone_benefits": [
+      {
+        "spend_threshold": 100000,
+        "benefit": "Annual fee reversal"
+      }
+    ],
+    "lounge_access": {
+      "domestic": "0",
+      "international": "0",
+      "program": "None"
+    },
+    "joining_bonus": "₹500 Amazon voucher",
+    "forex_markup": 3.5,
+    "fuel_surcharge_waiver": "None",
+    "insurance": [],
+    "redemption_options": [
+      "Amazon",
+      "Cleartrip vouchers"
+    ],
+    "best_for": [
+      "Amazon shopping",
+      "online"
+    ],
+    "card_network": "Visa",
+    "eligibility": "Income ₹2.5L+",
+    "description": "Entry card with 10X on Amazon, BookMyShow, Cleartrip, Lenskart, Netmeds.",
+    "image_url": "/assets/cards/sbi_simplyclick.png",
+    "expiry_policy": "varies"
+  },
+  "icici_amazon_pay": {
+    "name": "ICICI Amazon Pay",
+    "issuer": "ICICI Bank",
+    "tier": "entry",
+    "annual_fee": 0,
+    "joining_fee": 0,
+    "fee_waiver_spend": 0,
+    "reward_rate_base": 1.0,
+    "reward_type": "Amazon Pay Balance",
+    "reward_rate_per_category": {
+      "travel": 1,
+      "dining": 1,
+      "shopping": 5,
+      "fuel": 1,
+      "groceries": 2,
+      "entertainment": 1,
+      "streaming": 1
+    },
+    "milestone_benefits": [],
+    "lounge_access": {
+      "domestic": "0",
+      "international": "0",
+      "program": "None"
+    },
+    "joining_bonus": "₹500 Amazon Pay cashback",
+    "forex_markup": 3.5,
+    "fuel_surcharge_waiver": "None",
+    "insurance": [],
+    "redemption_options": [
+      "Amazon Pay Balance"
+    ],
+    "best_for": [
+      "Amazon shopping",
+      "cashback"
+    ],
+    "card_network": "Visa",
+    "eligibility": "Income ₹2.5L+",
+    "description": "Zero annual fee lifetime card with 5% back on Amazon and 2% on bill payments.",
+    "image_url": "/assets/cards/icici_amazon_pay.png",
+    "expiry_policy": "varies"
+  },
+  "icici_emeralde": {
+    "name": "ICICI Emeralde",
+    "issuer": "ICICI Bank",
+    "tier": "super_premium",
+    "annual_fee": 12000,
+    "joining_fee": 5000,
+    "fee_waiver_spend": 0,
+    "reward_rate_base": 2.0,
+    "reward_type": "Reward Points",
+    "reward_rate_per_category": {
+      "travel": 6,
+      "dining": 5,
+      "shopping": 2,
+      "fuel": 1,
+      "groceries": 2,
+      "entertainment": 3,
+      "streaming": 2
+    },
+    "milestone_benefits": [
+      {
+        "spend_threshold": 1000000,
+        "benefit": "Complimentary Taj voucher ₹25,000"
+      }
+    ],
+    "lounge_access": {
+      "domestic": "unlimited",
+      "international": "unlimited",
+      "program": "Priority Pass + Mastercard World Elite"
+    },
+    "joining_bonus": "15,000 reward points",
+    "forex_markup": 2.0,
+    "fuel_surcharge_waiver": "1% up to ₹250/month",
+    "insurance": [
+      "Air accident: ₹2 Cr",
+      "Purchase protection: ₹5L"
+    ],
+    "redemption_options": [
+      "Flights",
+      "Hotels",
+      "Taj stays"
+    ],
+    "best_for": [
+      "premium travel",
+      "luxury"
+    ],
+    "card_network": "Mastercard World Elite",
+    "eligibility": "Income ₹25L+ or invitation",
+    "description": "ICICI's ultra-premium card with unlimited worldwide lounge and Taj privileges.",
+    "image_url": "/assets/cards/icici_emeralde.png",
+    "expiry_policy": "varies"
+  },
+  "icici_coral": {
+    "name": "ICICI Coral",
+    "issuer": "ICICI Bank",
+    "tier": "mid_range",
+    "annual_fee": 500,
+    "joining_fee": 500,
+    "fee_waiver_spend": 200000,
+    "reward_rate_base": 1.0,
+    "reward_type": "PAYBACK Points",
+    "reward_rate_per_category": {
+      "travel": 2,
+      "dining": 2,
+      "shopping": 2,
+      "fuel": 1,
+      "groceries": 1,
+      "entertainment": 4,
+      "streaming": 2
+    },
+    "milestone_benefits": [
+      {
+        "spend_threshold": 200000,
+        "benefit": "Annual fee reversal"
+      }
+    ],
+    "lounge_access": {
+      "domestic": "4/year",
+      "international": "0",
+      "program": "Visa Signature"
+    },
+    "joining_bonus": "None",
+    "forex_markup": 3.5,
+    "fuel_surcharge_waiver": "1% up to ₹100/month",
+    "insurance": [],
+    "redemption_options": [
+      "PAYBACK partners",
+      "vouchers"
+    ],
+    "best_for": [
+      "entertainment",
+      "movies"
+    ],
+    "card_network": "Visa Signature",
+    "eligibility": "Income ₹3L+",
+    "description": "Great for movie and entertainment lovers — 4 free movie tickets/month via BookMyShow.",
+    "image_url": "/assets/cards/icici_coral.png",
+    "expiry_policy": "varies"
+  },
+  "federal_scapia": {
+    "name": "Federal Scapia",
+    "issuer": "Federal Bank",
+    "tier": "mid_range",
+    "annual_fee": 0,
+    "joining_fee": 0,
+    "fee_waiver_spend": 0,
+    "reward_rate_base": 2.0,
+    "reward_type": "Scapia Coins",
+    "reward_rate_per_category": {
+      "travel": 4,
+      "dining": 2,
+      "shopping": 2,
+      "fuel": 1,
+      "groceries": 2,
+      "entertainment": 2,
+      "streaming": 2
+    },
+    "milestone_benefits": [
+      {
+        "spend_threshold": 5000,
+        "benefit": "Unlimited domestic lounge access for the month"
+      }
+    ],
+    "lounge_access": {
+      "domestic": "unlimited (₹5K spend)",
+      "international": "0",
+      "program": "Visa"
+    },
+    "joining_bonus": "None",
+    "forex_markup": 0,
+    "fuel_surcharge_waiver": "None",
+    "insurance": [],
+    "redemption_options": [
+      "Flight bookings on Scapia app"
+    ],
+    "best_for": [
+      "domestic travel",
+      "no forex markup"
+    ],
+    "card_network": "Visa",
+    "eligibility": "Income ₹2.5L+",
+    "description": "Zero fee, zero forex card with unlimited lounge access at just ₹5K monthly spend.",
+    "image_url": "/assets/cards/federal_scapia.png",
+    "expiry_policy": "varies"
+  },
+  "onecard": {
+    "name": "OneCard",
+    "issuer": "OneCard (Federal)",
+    "tier": "entry",
+    "annual_fee": 0,
+    "joining_fee": 0,
+    "fee_waiver_spend": 0,
+    "reward_rate_base": 1.0,
+    "reward_type": "Cashback",
+    "reward_rate_per_category": {
+      "travel": 1,
+      "dining": 5,
+      "shopping": 5,
+      "fuel": 1,
+      "groceries": 5,
+      "entertainment": 5,
+      "streaming": 5
+    },
+    "milestone_benefits": [],
+    "lounge_access": {
+      "domestic": "0",
+      "international": "0",
+      "program": "None"
+    },
+    "joining_bonus": "5X rewards for first 90 days",
+    "forex_markup": 0,
+    "fuel_surcharge_waiver": "None",
+    "insurance": [],
+    "redemption_options": [
+      "Direct cashback"
+    ],
+    "best_for": [
+      "online shopping",
+      "no fee"
+    ],
+    "card_network": "Visa / Mastercard",
+    "eligibility": "Income ₹2.5L+",
+    "description": "Sleek metal card with zero annual fee and 5X rewards on top online merchants.",
+    "image_url": "/assets/cards/onecard.png",
+    "expiry_policy": "varies"
+  },
+  "indusind_legend": {
+    "name": "IndusInd Legend",
+    "issuer": "IndusInd Bank",
+    "tier": "super_premium",
+    "annual_fee": 10000,
+    "joining_fee": 10000,
+    "fee_waiver_spend": 0,
+    "reward_rate_base": 1.5,
+    "reward_type": "Reward Points",
+    "reward_rate_per_category": {
+      "travel": 5,
+      "dining": 4,
+      "shopping": 2,
+      "fuel": 1,
+      "groceries": 1.5,
+      "entertainment": 3,
+      "streaming": 2
+    },
+    "milestone_benefits": [
+      {
+        "spend_threshold": 500000,
+        "benefit": "Golf access + airport meet & greet"
+      }
+    ],
+    "lounge_access": {
+      "domestic": "unlimited",
+      "international": "6/year",
+      "program": "Priority Pass + Visa Infinite"
+    },
+    "joining_bonus": "30,000 reward points",
+    "forex_markup": 2.0,
+    "fuel_surcharge_waiver": "1% up to ₹200/month",
+    "insurance": [
+      "Air accident: ₹1 Cr",
+      "Travel insurance"
+    ],
+    "redemption_options": [
+      "Flights",
+      "Hotels",
+      "Catalog"
+    ],
+    "best_for": [
+      "premium travel",
+      "golf"
+    ],
+    "card_network": "Visa Infinite",
+    "eligibility": "Income ₹15L+",
+    "description": "Premium lifestyle card with golf privileges, concierge service, and strong travel rewards.",
+    "image_url": "/assets/cards/indusind_legend.png",
+    "expiry_policy": "varies"
+  }
+}
