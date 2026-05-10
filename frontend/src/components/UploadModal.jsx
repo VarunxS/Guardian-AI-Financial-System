@@ -9,11 +9,34 @@ export default function UploadModal({ isOpen, onClose }) {
   const [source, setSource] = useState('bank_csv');
   const [statementMonths, setStatementMonths] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [isConfigCheckLoading, setIsConfigCheckLoading] = useState(true);
+  const [isConfigured, setIsConfigured] = useState(false);
+  const [activeConfig, setActiveConfig] = useState(null);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
   const [loadingMessage, setLoadingMessage] = useState("Guardian Analyzing...");
   const [isSampleMode, setIsSampleMode] = useState(false);
   const [monthlyIncome, setMonthlyIncome] = useState(localStorage.getItem('GUARDIAN_INCOME') || 100000);
+
+  useEffect(() => {
+    const checkConfig = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/settings/config/${getUserId()}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.configured) {
+            setIsConfigured(true);
+            setActiveConfig(data);
+          }
+        }
+      } catch (err) {
+        console.error("Config check failed", err);
+      } finally {
+        setIsConfigCheckLoading(false);
+      }
+    };
+    if (isOpen) checkConfig();
+  }, [isOpen]);
 
   useEffect(() => {
     let interval;
@@ -65,8 +88,7 @@ export default function UploadModal({ isOpen, onClose }) {
       return;
     }
 
-    const apiKey = localStorage.getItem('GUARDIAN_API_KEY');
-    if (!apiKey) {
+    if (!isConfigured) {
       setError("API Provider not configured. Please go to Settings and enter your API Key first.");
       return;
     }
@@ -85,7 +107,7 @@ export default function UploadModal({ isOpen, onClose }) {
     formData.append('user_id', getUserId());
     formData.append('use_sample', isSample ? 'true' : 'false');
     formData.append('monthly_income', monthlyIncome.toString());
-    if (apiKey) formData.append('api_key', apiKey);
+    if (activeConfig?.api_key) formData.append('api_key', activeConfig.api_key);
     if (isSample) {
         formData.append('source', 'credit_card_pdf');
         formData.append('statement_months', '6');
@@ -229,20 +251,27 @@ export default function UploadModal({ isOpen, onClose }) {
                 </div>
               </div>
 
-              {error && (
+              {!isConfigured && !isConfigCheckLoading && (
                 <div className="p-5 rounded-2xl bg-status-danger/5 border border-status-danger/10 text-[13px] text-status-danger font-bold flex items-start gap-3">
                    <span className="material-symbols-outlined text-[18px]">error</span>
                    <div className="flex flex-col gap-3">
+                     <span>API Provider not configured. Please go to Settings and enter your API Key first.</span>
+                     <Link 
+                       to="/settings" 
+                       onClick={onClose}
+                       className="bg-status-danger text-white px-6 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-status-danger/90 transition-all text-center"
+                     >
+                       Go to Settings
+                     </Link>
+                   </div>
+                </div>
+              )}
+
+              {error && (
+                <div className="p-5 rounded-2xl bg-status-danger/5 border border-status-danger/10 text-[13px] text-status-danger font-bold flex items-start gap-3">
+                   <span className="material-symbols-outlined text-[18px]">error</span>
+                   <div className="flex flex-col gap-1">
                      <span>{error}</span>
-                     {error.includes("Settings") && (
-                       <Link 
-                         to="/settings" 
-                         onClick={onClose}
-                         className="bg-status-danger text-white px-6 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-status-danger/90 transition-all text-center"
-                       >
-                         Go to Settings
-                       </Link>
-                     )}
                    </div>
                 </div>
               )}
