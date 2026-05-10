@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import re
 from collections import defaultdict
 from datetime import datetime
@@ -23,6 +24,13 @@ COMPRESSION_CONSERVATIVE = {
     "discretionary": 0.50,
     "semi_fixed": 0.20
 }
+
+
+def _is_low_memory_mode() -> bool:
+    raw = os.getenv("GUARDIAN_LOW_MEMORY_MODE")
+    if raw is not None:
+        return raw.strip().lower() in {"1", "true", "yes", "on"}
+    return bool(os.getenv("RENDER"))
 
 def forecast_category_spend(transactions: list[Transaction], statement_months: int = 1) -> dict:
     """
@@ -282,6 +290,99 @@ class BudgetGoalsResponse(BaseModel):
         description="A list of friction points detected in the user's spending habits."
     )
 
+
+def _build_budget_goals_fallback(
+    forecasted: dict,
+    surplus: dict,
+    goals: list[dict],
+    scenarios: list[dict],
+    biggest_lever: dict,
+    behavioural_impacts: list[dict],
+    reason: str,
+) -> dict:
+    scenario_map = {s["goal_id"]: s for s in scenarios}
+    lever_category = biggest_lever.get("category") or "discretionary spending"
+    total_days_saved = biggest_lever.get("total_days_saved", 0)
+
+    goal_cards = []
+    for goal in goals:
+        goal_id = goal.get("goal_id")
+        scenario = scenario_map.get(goal_id, {})
+        target = goal.get("target_amount", 0) or 0
+        saved = goal.get("saved_amount", 0) or 0
+        current_months = scenario.get("current_pace_months", 9999)
+
+        if current_months <= 12:
+            status = "achievable"
+            status_reason = f"At your current pace, this goal is about {current_months:.1f} months away."
+        elif current_months <= 36:
+            status = "stretched"
+            status_reason = f"This goal is possible, but it needs steadier surplus over the next {current_months:.1f} months."
+        else:
+            status = "unrealistic"
+            status_reason = "At the current surplus pace, this goal will take quite a long time unless spending improves."
+
+        goal_cards.append({
+            "goal_id": goal_id,
+            "goal_name": goal.get("name"),
+            "status": status,
+            "status_reason": status_reason,
+            "current_pace_months": current_months,
+            "balanced_months": scenario.get("balanced_months", current_months),
+            "conservative_months": scenario.get("conservative_months", current_months),
+            "days_saved_balanced": scenario.get("days_saved_balanced", 0),
+            "days_saved_conservative": scenario.get("days_saved_conservative", 0),
+            "monthly_contribution": scenario.get("monthly_contribution_current", 0),
+            "remaining_amount": scenario.get("remaining_amount", max(0, target - saved)),
+            "progress_pct": round((saved / max(1, target)) * 100) if target else 0,
+            "biggest_lever_sentence": f"The clearest lever is {lever_category}; tightening it can meaningfully improve this timeline.",
+            "motivation_line": f"You've already saved ₹{saved:,.0f} toward this goal.",
+            "quick_win": f"Trim one high-spend area this month, starting with {lever_category}.",
+            "next_month_target": f"Aim to protect more of your surplus before increasing discretionary spend in {lever_category}.",
+            "acceleration_tips": [
+                f"Review the top spends inside {lever_category} and cap one repeat purchase.",
+                "Use one small monthly saving to increase goal contributions rather than adding a hard-to-maintain cut."
+            ]
+        })
+
+    personality = "balanced"
+    if surplus.get("forecasted_surplus", 0) < 0:
+        personality = "comfort_spender"
+    elif behavioural_impacts:
+        personality = "inconsistent"
+
+    top_recommendation = (
+        f"Focus first on {lever_category}; that is your highest-leverage category right now."
+        if biggest_lever.get("category")
+        else "Protect your monthly surplus first, then push extra money toward your highest-priority goal."
+    )
+
+    return {
+        "type": "budget_goals",
+        "error": reason,
+        "spending_personality": personality,
+        "spending_personality_explanation": "This lightweight mode keeps the forecast deterministic and trims the heavier AI reasoning stage.",
+        "one_line_verdict": "Your budget math is available, and the plan below is a lightweight version designed for small-server deployments.",
+        "top_recommendation": top_recommendation,
+        "goal_priority_note": "Goal allocation is shown using the current stored priorities and surplus split.",
+        "goal_cards": goal_cards,
+        "behavioural_goal_impacts": behavioural_impacts,
+        "raw": {
+            "budget_forecast": forecasted,
+            "surplus": surplus,
+            "goals": goals,
+            "scenarios": scenarios,
+            "biggest_lever": biggest_lever,
+            "behavioural_impacts": behavioural_impacts
+        },
+        "budget_summary": {
+            "forecasted_total": forecasted["total"],
+            "forecasted_surplus": surplus["forecasted_surplus"],
+            "surplus_health": surplus["surplus_health"],
+            "one_line_verdict": "This is a lightweight budget analysis optimized for low-memory hosting."
+        }
+    }
+
 # ── Phase 3: New LLM Call Architecture ───────────────────────────────────
 
 def run_budget_goals_agent(
@@ -340,6 +441,18 @@ def run_budget_goals_agent(
     else:
         behavioural_impacts = compute_behavioural_goal_impacts(
             transactions, scenarios, goals
+        )
+
+    if _is_low_memory_mode():
+        logger.info("Budget goals agent running in low-memory mode; skipping heavy LLM reasoning.")
+        return _build_budget_goals_fallback(
+            forecasted=forecasted,
+            surplus=surplus,
+            goals=goals,
+            scenarios=scenarios,
+            biggest_lever=biggest_lever,
+            behavioural_impacts=behavioural_impacts,
+            reason="low_memory_mode",
         )
 
     # ── Phase 2: Call 1 — Reasoning chain ────────────────────────────
@@ -551,35 +664,12 @@ Now generate the structured JSON advice based on your reasoning above.
     except Exception as e:
         logger.error(f"Budget Goals Agent failed: {e}")
         # Existing fallback return exactly as is
-        return {
-            "type": "budget_goals",
-            "error": str(e),
-            "raw": {
-                "budget_forecast": forecasted,
-                "surplus": surplus,
-                "goals": goals,
-                "scenarios": scenarios,
-                "biggest_lever": biggest_lever,
-                "behavioural_impacts": behavioural_impacts
-            },
-            "budget_summary": {
-                "forecasted_total": forecasted["total"],
-                "forecasted_surplus": surplus["forecasted_surplus"],
-                "surplus_health": surplus["surplus_health"],
-                "one_line_verdict": "Your budget is calculated, but AI advice is unavailable."
-            },
-            "goal_cards": [
-                {
-                    "goal_id": s["goal_id"],
-                    "goal_name": s["name"],
-                    "progress_pct": round((1 - s["remaining_amount"] / max(1, next(g["target_amount"] for g in goals if g.get("goal_id") == s["goal_id"]))) * 100),
-                    "current_pace_months": s["current_pace_months"],
-                    "balanced_months": s["balanced_months"],
-                    "conservative_months": s["conservative_months"],
-                    "biggest_lever_sentence": f"Focus on {biggest_lever['category']} to save {biggest_lever['total_days_saved']} days.",
-                    "motivation_line": "Keep going, every rupee counts.",
-                    "acceleration_tips": []
-                } for s in scenarios
-            ],
-            "top_recommendation": "Maintain your current surplus to reach your primary goals."
-        }
+        return _build_budget_goals_fallback(
+            forecasted=forecasted,
+            surplus=surplus,
+            goals=goals,
+            scenarios=scenarios,
+            biggest_lever=biggest_lever,
+            behavioural_impacts=behavioural_impacts,
+            reason=str(e),
+        )

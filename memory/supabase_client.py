@@ -136,6 +136,11 @@ class SupabaseMemory:
     def _is_connected(self) -> bool:
         return self._client is not None
 
+    @property
+    def is_connected(self) -> bool:
+        """Public connection status for API routes that need to validate persistence."""
+        return self._is_connected
+
     async def get_provider_config(self, user_id: str) -> dict | None:
         """Returns stored provider config or None if not set."""
         if not self._is_connected:
@@ -147,8 +152,9 @@ class SupabaseMemory:
                 .single()\
                 .execute()
             return result.data if result.data else None
-        except Exception:
-            return None
+        except Exception as e:
+            logger.error(f"Failed to fetch provider config for {user_id}: {e}")
+            raise
 
     async def save_provider_config(
         self,
@@ -158,10 +164,16 @@ class SupabaseMemory:
         api_key: str,
         exa_api_key: str = ""
     ) -> None:
-        self.upsert_user(user_id)
         if not self._is_connected:
-            return
+            raise RuntimeError(
+                "Supabase is not configured on the backend. "
+                "Set SUPABASE_URL and SUPABASE_KEY in Render."
+            )
         try:
+            self._client.table("users").upsert(
+                {"user_id": user_id},
+                on_conflict="user_id",
+            ).execute()
             self._client.table("user_provider_config").upsert({
                 "user_id": user_id,
                 "provider": provider,
@@ -172,6 +184,7 @@ class SupabaseMemory:
             }).execute()
         except Exception as e:
             logger.error(f"Failed to save provider config: {e}")
+            raise
 
     # ------------------------------------------------------------------
     # Users & Income
@@ -585,4 +598,3 @@ class SupabaseMemory:
         except Exception as e:
             logger.warning(f"Could not build user context summary: {e}")
             return ""
-

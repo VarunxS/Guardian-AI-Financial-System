@@ -9,10 +9,6 @@ import logging
 from datetime import datetime
 from uuid import uuid4
 
-import pandas as pd
-import pdfplumber
-import fitz  # PyMuPDF
-
 from ingestion.schema import Transaction, StatementUpload
 
 logger = logging.getLogger(__name__)
@@ -223,6 +219,8 @@ class StatementParser:
         """
         Universal CSV Parser with enhanced encoding and header detection.
         """
+        import pandas as pd
+
         df = None
         # Try different common encodings
         for encoding in ["utf-8", "latin-1", "iso-8859-1", "cp1252"]:
@@ -328,6 +326,8 @@ class StatementParser:
     def _parse_with_llm(self, file_path: str, api_key: str, provider: str = "google", model_id: str = "gemini-2.5-flash-lite") -> list[Transaction]:
         """Extract transactions from PDF text using an LLM (OpenAI/Gemini)."""
         try:
+            import fitz  # PyMuPDF
+
             # Extract raw text (handle both PDF and plain text/CSV)
             raw_text = ""
             if file_path.lower().endswith(".pdf"):
@@ -418,6 +418,8 @@ class StatementParser:
         Extract transactions from PDF tables using pdfplumber.
         Enhanced with better line detection and encryption handling.
         """
+        import pdfplumber
+
         transactions: list[Transaction] = []
         try:
             # Settings to handle receipts/statements without clear borders
@@ -452,6 +454,8 @@ class StatementParser:
 
     def _parse_pdf_text(self, file_path: str) -> list[Transaction]:
         """Fall back: extract transactions from raw PDF text using PyMuPDF."""
+        import fitz  # PyMuPDF
+
         transactions: list[Transaction] = []
         try:
             doc = fitz.open(file_path)
