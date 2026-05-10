@@ -7,7 +7,8 @@ from __future__ import annotations
 import logging
 
 from agents.llm_factory import create_llm
-from langchain.chains import RetrievalQA
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
 
 from rag.vectorstore import GuardianVectorStore
@@ -42,14 +43,6 @@ class CardIntelligenceRAG:
     ) -> dict:
         """
         Answer a credit card question using RAG.
-
-        Args:
-            question: User's question about cards
-            api_key: User's OpenAI API key (BYOK)
-            user_spend_context: Optional dict of category → monthly spend
-
-        Returns:
-            Dict with answer, source cards, and recommended card
         """
         try:
             # Prepend user context if available
@@ -62,36 +55,39 @@ class CardIntelligenceRAG:
                 )
                 full_question = f"User context: {context_lines}\nQuestion: {question}"
 
-            # Build the chain with user's API key
+            # Build the chain with LCEL (LangChain 0.3 compatible)
             llm = create_llm(api_key, provider, model_id, temperature=0.3)
             retriever = self._vectorstore.get_cards_retriever(k=8)
 
-            prompt = PromptTemplate(
-                template=CARD_SYSTEM_PROMPT,
-                input_variables=["context", "question"],
+            prompt = PromptTemplate.from_template(CARD_SYSTEM_PROMPT)
+
+            def format_docs(docs):
+                return "\n\n".join(doc.page_content for doc in docs)
+
+            # Retrieve source documents first
+            source_documents = retriever.invoke(full_question)
+            
+            # Run the chain manually for maximum compatibility
+            chain = (
+                {"context": lambda x: format_docs(source_documents), "question": RunnablePassthrough()}
+                | prompt
+                | llm
+                | StrOutputParser()
             )
 
-            chain = RetrievalQA.from_chain_type(
-                llm=llm,
-                chain_type="stuff",
-                retriever=retriever,
-                return_source_documents=True,
-                chain_type_kwargs={"prompt": prompt},
-            )
-
-            result = chain.invoke({"query": full_question})
+            answer = chain.invoke(full_question)
 
             # Extract source card names from documents
             source_cards = list({
                 doc.metadata.get("card_name", "Unknown")
-                for doc in result.get("source_documents", [])
+                for doc in source_documents
             })
 
             # Try to identify a recommended card from the answer
             recommended = source_cards[0] if source_cards else None
 
             return {
-                "answer": result.get("result", "No answer generated."),
+                "answer": answer,
                 "source_cards": source_cards,
                 "recommended_card": recommended,
             }
