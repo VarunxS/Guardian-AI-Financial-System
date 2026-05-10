@@ -2,8 +2,9 @@
 Guardian vector store — ChromaDB with 3 collections and HuggingFace embeddings.
 """
 
+import os
 import chromadb
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_community.vectorstores import Chroma
 
 from config import settings
@@ -17,15 +18,18 @@ class GuardianVectorStore:
     HINDSIGHT_COLLECTION = "guardian_hindsight"
 
     def __init__(self):
-        self._embedding_model = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2",
+        # Memory Optimization: Using Google's Cloud Embeddings instead of local models
+        # to save ~300MB of RAM and prevent Render OOM crashes.
+        self._embedding_model = GoogleGenerativeAIEmbeddings(
+            model="models/embedding-001",
+            google_api_key=os.getenv("GOOGLE_API_KEY") or os.getenv("OPENAI_API_KEY") or "MISSING_KEY"
         )
         self._chroma_client = chromadb.PersistentClient(
             path=settings.chroma_persist_dir,
         )
 
     @property
-    def embedding_model(self) -> HuggingFaceEmbeddings:
+    def embedding_model(self) -> GoogleGenerativeAIEmbeddings:
         return self._embedding_model
 
     def _get_langchain_chroma(self, collection_name: str) -> Chroma:
