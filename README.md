@@ -30,33 +30,7 @@ Guardian is a premium, multi-agent AI platform designed to audit your financial 
 *   **Intelligence**: OpenAI (GPT-4o), Google Gemini (1.5 Pro/Flash), Exa AI (Search).
 *   **Memory**: Supabase (PostgreSQL), ChromaDB (Vector Store).
 
-## 📥 Installation
 
-### 1. Clone the Repository
-```bash
-git clone https://github.com/VarunxS/Guardian-AI-Financial-System.git
-cd Guardian-AI-Financial-System
-```
-
-### 2. Backend Setup
-```bash
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Configure .env
-cp .env.example .env # Fill in your Supabase & AI keys
-```
-
-### 3. Frontend Setup
-```bash
-cd frontend
-npm install
-npm run dev
-```
 
 ## 🏗️ Architecture Idle
 Guardian uses a **Supervisor Agent** to coordinate between specialized nodes:
