@@ -92,8 +92,9 @@ Pipeline complete. Ready for chat.`;
                   <Link to="/dashboard" className="h-14 px-8 bg-accent text-white rounded-xl text-[15px] font-bold hover:bg-accent-hover transition-all shadow-glow flex items-center justify-center gap-2">
                      Run Local Analysis
                   </Link>
-                  <a href="https://github.com/varunsingla/guardian" target="_blank" rel="noreferrer" className="h-14 px-8 bg-white border border-border-mid text-text-ink rounded-xl text-[15px] font-bold hover:bg-bg-subtle transition-all shadow-soft flex items-center justify-center">
-                     View Architecture
+                  <a href="https://github.com/VarunxS/Guardian-AI-Financial-System" target="_blank" rel="noreferrer" className="h-14 px-8 bg-white border border-border-mid text-text-ink rounded-xl text-[15px] font-bold hover:bg-bg-subtle transition-all shadow-soft flex items-center justify-center gap-2">
+                     <span className="material-symbols-outlined text-[20px]">grade</span>
+                     Star on GitHub
                   </a>
                </motion.div>
             </div>
@@ -493,7 +494,7 @@ Pipeline complete. Ready for chat.`;
             <div className="text-[12px] md:text-[13px] text-text-muted font-bold uppercase tracking-widest flex flex-col md:flex-row flex-wrap justify-center items-center gap-3 md:gap-4">
                <span>© 2026 Guardian AI</span>
                <span className="hidden md:inline">·</span>
-               <a href="https://github.com/varunsingla/guardian" target="_blank" rel="noreferrer" className="hover:text-accent transition-colors flex items-center gap-1">
+               <a href="https://github.com/VarunxS/Guardian-AI-Financial-System" target="_blank" rel="noreferrer" className="hover:text-accent transition-colors flex items-center gap-1">
                  <span className="material-symbols-outlined text-[16px]">code</span> GitHub Repository
                </a>
             </div>
