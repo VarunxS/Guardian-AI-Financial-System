@@ -217,38 +217,42 @@ class StatementParser:
     # ------------------------------------------------------------------
     def _parse_bank_csv(self, file_path: str) -> list[Transaction]:
         """
-        Universal CSV Parser:
-        1. Cleans the file of metadata headers.
-        2. Heuristically identifies Date, Description, and Amount columns.
-        3. Normalizes amounts regardless of formatting (Dr/Cr, +/-).
+        Universal CSV Parser with enhanced encoding and header detection.
         """
-        # Step 1: Skip metadata headers commonly found in bank exports
         df = None
-        for skip in range(15):
-            try:
-                temp_df = pd.read_csv(file_path, skiprows=skip, skipinitialspace=True)
-                if len(temp_df.columns) >= 3 and len(temp_df) > 0:
-                    cols_str = " ".join([str(c).lower() for c in temp_df.columns])
-                    if any(x in cols_str for x in ["date", "desc", "narration", "particular", "amount", "debit"]):
-                        df = temp_df
-                        break
-            except Exception:
-                continue
+        # Try different common encodings
+        for encoding in ["utf-8", "latin-1", "iso-8859-1", "cp1252"]:
+            if df is not None: break
+            for skip in range(20):
+                try:
+                    temp_df = pd.read_csv(file_path, skiprows=skip, skipinitialspace=True, encoding=encoding)
+                    if len(temp_df.columns) >= 3 and len(temp_df) > 0:
+                        cols_str = " ".join([str(c).lower() for c in temp_df.columns])
+                        # Broader keyword set for Indian banks
+                        keywords = ["date", "desc", "narration", "particular", "amount", "debit", "txn", "details", "ref", "value"]
+                        if any(x in cols_str for x in keywords):
+                            df = temp_df
+                            break
+                except Exception:
+                    continue
         
         if df is None:
-            df = pd.read_csv(file_path, skipinitialspace=True)
+            try:
+                df = pd.read_csv(file_path, skipinitialspace=True, encoding="utf-8")
+            except:
+                df = pd.read_csv(file_path, skipinitialspace=True, encoding="latin-1")
 
         df.columns = [str(c).strip().lower() for c in df.columns]
 
-        # Step 2: Heuristic Column Identification
+        # Step 2: Heuristic Column Identification (Enhanced)
         identified = {"date": None, "desc": None, "debit": None, "credit": None, "amount": None}
         
         name_map = {
-            "date": ["date", "txn date", "transaction date", "value date", "posting date"],
-            "desc": ["description", "narration", "particulars", "details", "remarks"],
-            "debit": ["debit", "withdrawal", "withdrawal amt", "dr"],
-            "credit": ["credit", "deposit", "deposit amt", "cr"],
-            "amount": ["amount", "txn amount", "transaction amount", "amount (inr)"]
+            "date": ["date", "txn date", "transaction date", "value date", "posting date", "transaction_date", "trans date"],
+            "desc": ["description", "narration", "particulars", "details", "remarks", "transaction remarks", "remittance info"],
+            "debit": ["debit", "withdrawal", "withdrawal amt", "dr", "debit amount", "paid out"],
+            "credit": ["credit", "deposit", "deposit amt", "cr", "credit amount", "paid in"],
+            "amount": ["amount", "txn amount", "transaction amount", "amount (inr)", "net amount", "total amount"]
         }
 
         for target, keywords in name_map.items():
