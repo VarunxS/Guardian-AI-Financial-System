@@ -158,6 +158,7 @@ class SupabaseMemory:
         api_key: str,
         exa_api_key: str = ""
     ) -> None:
+        self.upsert_user(user_id)
         if not self._is_connected:
             return
         try:
