@@ -123,7 +123,7 @@ export default function BudgetGoals() {
 
   const handleSaveIncome = async () => {
     try {
-      await fetch('http://localhost:8000/api/user/profile', {
+      await fetch(`${API_BASE_URL}/api/user/profile`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user_id: 'user_123', monthly_income: parseFloat(profile.monthly_income) || 0 })
@@ -514,7 +514,7 @@ export default function BudgetGoals() {
             <motion.form onSubmit={editGoal?.isNew ? async (e) => {
               e.preventDefault();
               try {
-                await fetch('http://localhost:8000/api/goals', {
+                await fetch(`${API_BASE_URL}/api/goals`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({

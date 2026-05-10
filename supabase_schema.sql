@@ -87,12 +87,25 @@ alter table goals enable row level security;
 alter table goal_snapshots enable row level security;
 
 -- Allow full access via service key
+drop policy if exists "Service key full access" on users;
 create policy "Service key full access" on users for all using (true);
+
+drop policy if exists "Service key full access" on analysis_runs;
 create policy "Service key full access" on analysis_runs for all using (true);
+
+drop policy if exists "Service key full access" on findings;
 create policy "Service key full access" on findings for all using (true);
+
+drop policy if exists "Service key full access" on resolved_actions;
 create policy "Service key full access" on resolved_actions for all using (true);
+
+drop policy if exists "Service key full access" on user_income;
 create policy "Service key full access" on user_income for all using (true);
+
+drop policy if exists "Service key full access" on goals;
 create policy "Service key full access" on goals for all using (true);
+
+drop policy if exists "Service key full access" on goal_snapshots;
 create policy "Service key full access" on goal_snapshots for all using (true);
 
 -- 8. User Provider Config (NEW - BYOK)
@@ -106,4 +119,5 @@ create table if not exists user_provider_config (
 );
 
 alter table user_provider_config enable row level security;
+drop policy if exists "Service key full access" on user_provider_config;
 create policy "Service key full access" on user_provider_config for all using (true);

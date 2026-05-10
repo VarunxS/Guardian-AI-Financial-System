@@ -98,6 +98,7 @@ export default function Settings() {
       }
     } catch (err) {
       console.error("Failed to fetch config", err);
+      showStatus('error', 'Connection to Guardian Protocol failed. Please check your internet or backend status.');
     }
   };
 
@@ -118,7 +119,7 @@ export default function Settings() {
 
     try {
       // 1. Verify Key
-      const testRes = await fetch('http://localhost:8000/api/settings/test-key', {
+      const testRes = await fetch(`${API_BASE_URL}/api/settings/test-key`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ provider: selectedProvider, model_id: finalModel, api_key: apiKey })
