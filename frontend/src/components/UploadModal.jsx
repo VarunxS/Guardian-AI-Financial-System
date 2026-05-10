@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getUserId } from '../utils/auth';
+import { API_BASE_URL } from '../config';
 
 export default function UploadModal({ isOpen, onClose }) {
   const [file, setFile] = useState(null);
@@ -86,7 +87,7 @@ export default function UploadModal({ isOpen, onClose }) {
     }
 
     try {
-      const res = await fetch('http://localhost:8000/api/analyse', {
+      const res = await fetch(`${API_BASE_URL}/api/analyse`, {
         method: 'POST',
         body: formData,
       });

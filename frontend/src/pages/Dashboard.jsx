@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { getUserId } from '../utils/auth';
+import { API_BASE_URL } from '../config';
 
 // Animation variants
 const containerVariants = {
@@ -87,7 +88,7 @@ export default function Dashboard() {
   useEffect(() => {
     const stored = sessionStorage.getItem('GUARDIAN_ANALYSIS');
     if (stored) setAnalysis(JSON.parse(stored));
-    fetch(`http://localhost:8000/api/user/${getUserId()}/context`)
+    fetch(`${API_BASE_URL}/api/user/${getUserId()}/context`)
       .then(r => r.json())
       .then(data => setProfile(data))
       .catch(() => {});

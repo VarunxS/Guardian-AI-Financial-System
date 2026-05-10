@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import UploadModal from '../components/UploadModal';
 import { getUserId } from '../utils/auth';
+import { API_BASE_URL } from '../config';
 
 export default function BudgetGoals() {
   const [analysis, setAnalysis] = useState(null);
@@ -19,7 +20,7 @@ export default function BudgetGoals() {
 
   const fetchProfile = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/api/user/${getUserId()}/context`);
+      const res = await fetch(`${API_BASE_URL}/api/user/${getUserId()}/context`);
       const data = await res.json();
       setProfile(data);
     } catch (err) { console.error(err); }
@@ -34,7 +35,7 @@ export default function BudgetGoals() {
   const handleUpdateGoal = async (e) => {
     e.preventDefault();
     try {
-      await fetch('http://localhost:8000/api/goals', {
+      await fetch(`${API_BASE_URL}/api/goals`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -54,7 +55,7 @@ export default function BudgetGoals() {
 
   const handleDeleteGoal = async (goalId) => {
     try {
-      await fetch(`http://localhost:8000/api/goals/${goalId}`, { method: 'DELETE' });
+      await fetch(`${API_BASE_URL}/api/goals/${goalId}`, { method: 'DELETE' });
       setEditGoal(null);
       fetchProfile();
       showToast('success', 'Goal removed');
@@ -93,7 +94,7 @@ export default function BudgetGoals() {
 
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:8000/api/goals/analyze', {
+      const res = await fetch(`${API_BASE_URL}/api/goals/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

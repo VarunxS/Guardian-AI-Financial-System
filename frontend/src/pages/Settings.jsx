@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getUserId } from '../utils/auth';
+import { API_BASE_URL } from '../config';
 
 const PROVIDERS = {
     "google": {
@@ -70,7 +71,7 @@ export default function Settings() {
 
   const fetchConfig = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/api/settings/config/${getUserId()}`);
+      const res = await fetch(`${API_BASE_URL}/api/settings/config/${getUserId()}`);
       const data = await res.json();
       
       if (data.db_error) {
@@ -134,7 +135,7 @@ export default function Settings() {
       }
 
       // 2. Save Config
-      const saveRes = await fetch('http://localhost:8000/api/settings/config', {
+      const saveRes = await fetch(`${API_BASE_URL}/api/settings/config`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -167,7 +168,7 @@ export default function Settings() {
 
     setIsPurging(true);
     try {
-      const res = await fetch('http://localhost:8000/api/user/purge', {
+      const res = await fetch(`${API_BASE_URL}/api/user/purge`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user_id: getUserId() })

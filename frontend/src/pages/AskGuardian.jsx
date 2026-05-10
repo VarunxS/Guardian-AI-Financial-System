@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { getUserId } from '../utils/auth';
+import { API_BASE_URL } from '../config';
 
 export default function AskGuardian() {
   const [messages, setMessages] = useState(() => {
@@ -90,7 +91,7 @@ export default function AskGuardian() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8000/api/ask', {
+      const response = await fetch(`${API_BASE_URL}/api/ask`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
