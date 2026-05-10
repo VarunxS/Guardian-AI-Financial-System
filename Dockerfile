@@ -9,7 +9,7 @@ ENV PORT 8000
 # Set work directory
 WORKDIR /app
 
-# Install system dependencies (needed for some python packages like PyMuPDF)
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
     libmagic-dev \
@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y \
 # Install python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install gunicorn uvicorn
 
 # Copy project
 COPY . .
@@ -25,6 +26,5 @@ COPY . .
 # Expose port
 EXPOSE 8000
 
-# Start command (using uvicorn directly for Render's simple setup)
-# For Render, we use 0.0.0.0 to bind to all interfaces
-CMD uvicorn main:app --host 0.0.0.0 --port $PORT
+# Start command using the shell form to ensure $PORT is expanded correctly by Render
+CMD sh -c "gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:$PORT"

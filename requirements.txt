@@ -16,3 +16,5 @@ python-multipart>=0.0.9
 exa-py>=1.0.0
 langchain-google-genai>=1.0.0
 langchain-mistralai>=0.1.0
+gunicorn>=23.0.0
+uvicorn>=0.30.0
