@@ -127,9 +127,9 @@ export default function UploadModal({ isOpen, onClose }) {
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative w-full max-w-xl bg-bg-surface border border-border-light rounded-[40px] p-10 shadow-2xl"
+          className="relative w-full max-w-lg bg-bg-surface border border-border-light rounded-[32px] p-8 shadow-2xl"
         >
-          <div className="flex justify-between items-center mb-8 pb-6 border-b border-border-light">
+          <div className="flex justify-between items-center mb-6 pb-4 border-b border-border-light">
             <div className="flex items-center gap-3">
                <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
                  <span className="material-symbols-outlined text-[24px] fill-1">upload_file</span>
@@ -145,9 +145,9 @@ export default function UploadModal({ isOpen, onClose }) {
           </div>
 
           {!result ? (
-            <div className="space-y-8">
+            <div className="space-y-6">
               <div>
-                <p className="text-[12px] font-bold text-text-ink uppercase tracking-wider mb-4">Select Source Engine</p>
+                <p className="text-[12px] font-bold text-text-ink uppercase tracking-wider mb-3">Select Source Engine</p>
                 <div className="grid grid-cols-3 gap-3">
                   {[
                     { id: 'bank_csv', label: 'Bank CSV', icon: 'account_balance' },
@@ -157,7 +157,7 @@ export default function UploadModal({ isOpen, onClose }) {
                     <button
                       key={t.id}
                       onClick={() => setSource(t.id)}
-                      className={`flex flex-col items-center gap-2 py-4 px-3 rounded-2xl border transition-all ${
+                      className={`flex flex-col items-center gap-2 py-3 px-3 rounded-2xl border transition-all ${
                         source === t.id 
                           ? 'bg-accent/5 border-accent text-accent shadow-glow' 
                           : 'bg-bg-subtle border-border-light text-text-muted hover:border-border-mid hover:text-text-body'
@@ -171,7 +171,7 @@ export default function UploadModal({ isOpen, onClose }) {
               </div>
 
               <div>
-                <p className="text-[12px] font-bold text-text-ink uppercase tracking-wider mb-4">Statement Period</p>
+                <p className="text-[12px] font-bold text-text-ink uppercase tracking-wider mb-3">Statement Period</p>
                 <div className="grid grid-cols-4 gap-3">
                   {[
                     { val: 1, label: '1 Month' },
@@ -182,7 +182,7 @@ export default function UploadModal({ isOpen, onClose }) {
                     <button
                       key={p.val}
                       onClick={() => setStatementMonths(p.val)}
-                      className={`flex items-center justify-center py-3 px-2 rounded-xl border transition-all ${
+                      className={`flex items-center justify-center py-2 px-2 rounded-xl border transition-all ${
                         statementMonths === p.val 
                           ? 'bg-accent/5 border-accent text-accent shadow-soft font-bold' 
                           : 'bg-bg-subtle border-border-light text-text-muted hover:border-border-mid hover:text-text-body font-medium'
@@ -195,14 +195,14 @@ export default function UploadModal({ isOpen, onClose }) {
               </div>
 
               <div>
-                <p className="text-[12px] font-bold text-text-ink uppercase tracking-wider mb-4">Adjust Monthly Income</p>
+                <p className="text-[12px] font-bold text-text-ink uppercase tracking-wider mb-3">Adjust Monthly Income</p>
                 <div className="relative">
                   <span className="absolute left-5 top-1/2 -translate-y-1/2 text-text-muted font-mono font-bold">₹</span>
                   <input 
                     type="number" 
                     value={monthlyIncome} 
                     onChange={(e) => setMonthlyIncome(e.target.value)}
-                    className="w-full h-14 bg-bg-subtle border border-border-light rounded-2xl pl-10 pr-6 text-[15px] font-mono font-bold text-text-ink focus:border-accent focus:bg-accent/5 outline-none transition-all"
+                    className="w-full h-12 bg-bg-subtle border border-border-light rounded-2xl pl-10 pr-6 text-[15px] font-mono font-bold text-text-ink focus:border-accent focus:bg-accent/5 outline-none transition-all"
                   />
                 </div>
               </div>
@@ -214,10 +214,10 @@ export default function UploadModal({ isOpen, onClose }) {
                   onChange={handleFileChange}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" 
                 />
-                <div className={`w-full border-2 border-dashed rounded-3xl p-10 flex flex-col items-center justify-center transition-all ${
+                <div className={`w-full border-2 border-dashed rounded-3xl p-6 flex flex-col items-center justify-center transition-all ${
                   file ? 'border-accent bg-accent/5' : 'border-border-mid group-hover:border-accent bg-bg-subtle'
                 }`}>
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 ${file ? 'bg-accent text-white shadow-glow' : 'bg-bg-surface border border-border-light text-text-muted shadow-soft'}`}>
+                  <div className={`w-10 h-10 rounded-2xl flex items-center justify-center mb-2 ${file ? 'bg-accent text-white shadow-glow' : 'bg-bg-surface border border-border-light text-text-muted shadow-soft'}`}>
                     <span className="material-symbols-outlined text-[28px] fill-1">{file ? 'task' : 'add_circle'}</span>
                   </div>
                   <p className="text-[15px] font-bold text-text-ink mb-1">
@@ -247,7 +247,7 @@ export default function UploadModal({ isOpen, onClose }) {
                 </div>
               )}
 
-              <div className="bg-bg-subtle border border-border-light rounded-[24px] p-6 flex flex-col items-center gap-4">
+              <div className="bg-bg-subtle border border-border-light rounded-[24px] p-4 flex flex-col items-center gap-4">
                  <p className="text-[12px] text-text-muted font-bold text-center">Don't have a statement handy?</p>
                  <button 
                    onClick={(e) => handleUpload(e, true)}
