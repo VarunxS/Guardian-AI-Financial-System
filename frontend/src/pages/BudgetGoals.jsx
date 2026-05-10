@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import UploadModal from '../components/UploadModal';
 import { getUserId } from '../utils/auth';
+import { fetchStoredProviderConfig } from '../utils/providerConfig';
 import { API_BASE_URL } from '../config';
 
 export default function BudgetGoals() {
@@ -73,9 +74,30 @@ export default function BudgetGoals() {
   };
 
   // Data extraction
-  const liveGoals = profile.goals || [];
-  const liveIncome = profile.monthly_income || 0;
-  const hasProfile = liveIncome > 0 && liveGoals.length > 0;
+  // Use analysis data even if budget_goals_report had "missing_profile" error
+  const report = analysis?.budget_goals_report || {};
+  const raw = report.raw || {};
+  const forecast = raw.budget_forecast || analysis?.budget_goals_report?.raw?.budget_forecast || { by_category: {}, total: 0 };
+  const hasAnalysisData = !!analysis && (analysis.insight_findings?.length > 0 || analysis.reward_findings?.length > 0 || Object.keys(forecast.by_category || {}).length > 0);
+  const incomeFromAnalysis = raw?.surplus?.monthly_income || raw?.monthly_income || 0;
+  const liveGoals = (profile.goals && profile.goals.length > 0) ? profile.goals : (raw.goals || []);
+  const liveIncome = profile.monthly_income || incomeFromAnalysis || 0;
+  const hasIncome = liveIncome > 0;
+  const hasGoals = liveGoals.length > 0;
+  const hasProfile = hasIncome && hasGoals;
+
+  // If budget report ran successfully (no error), use its goal_cards
+  const hasFullReport = !!report && !report.error && report.goal_cards?.length > 0;
+  const goalCards = hasFullReport ? report.goal_cards : [];
+  const impacts = report.behavioural_goal_impacts || [];
+  const budgetSummary = report.budget_summary || {};
+  const shouldPromptForGoals = hasIncome && !hasGoals && !hasFullReport;
+  const isProfileMissingOnlyGoals = report.error === 'missing_profile' && hasIncome && !hasGoals;
+
+  // Compute client-side metrics when we have analysis forecast + live profile
+  const forecastTotal = forecast.total || 0;
+  const computedSurplus = hasIncome ? liveIncome - forecastTotal : 0;
+  const surplusHealth = computedSurplus > liveIncome * 0.3 ? 'strong' : computedSurplus > 0 ? 'tight' : 'negative';
 
   // Handle re-running the agent
   const [isUploadOpen, setIsUploadOpen] = useState(false);
@@ -86,26 +108,26 @@ export default function BudgetGoals() {
       return;
     }
 
-    const apiKey = localStorage.getItem('GUARDIAN_API_KEY');
-    if (!apiKey) {
-      showToast('error', 'Please configure your API Key in Settings first.');
-      return;
-    }
-
     setLoading(true);
     try {
+      const config = await fetchStoredProviderConfig();
       const res = await fetch(`${API_BASE_URL}/api/goals/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           user_id: getUserId(),
-          api_key: apiKey,
+          api_key: config.api_key,
+          provider: config.provider,
+          model_id: config.model_id,
           budget_forecast: forecast,
           behavioural_impacts: analysis?.budget_goals_report?.raw?.behavioural_impacts || []
         })
       });
 
-      if (!res.ok) throw new Error('Analysis failed');
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || 'Analysis failed');
+      }
 
       const report = await res.json();
       
@@ -115,7 +137,7 @@ export default function BudgetGoals() {
       setAnalysis(updatedAnalysis);
       showToast('success', 'Strategy updated');
     } catch (err) {
-      showToast('error', 'Failed to run agent');
+      showToast('error', err.message || 'Failed to run agent');
     } finally {
       setLoading(false);
     }
@@ -126,7 +148,7 @@ export default function BudgetGoals() {
       await fetch(`${API_BASE_URL}/api/user/profile`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: 'user_123', monthly_income: parseFloat(profile.monthly_income) || 0 })
+        body: JSON.stringify({ user_id: getUserId(), monthly_income: parseFloat(profile.monthly_income) || 0 })
       });
       showToast('success', 'Monthly income updated');
       fetchProfile();
@@ -134,23 +156,6 @@ export default function BudgetGoals() {
       showToast('error', 'Failed to update income');
     }
   };
-
-  // Use analysis data even if budget_goals_report had "missing_profile" error
-  const report = analysis?.budget_goals_report || {};
-  const raw = report.raw || {};
-  const forecast = raw.budget_forecast || analysis?.budget_goals_report?.raw?.budget_forecast || { by_category: {}, total: 0 };
-  const hasAnalysisData = !!analysis && (analysis.insight_findings?.length > 0 || analysis.reward_findings?.length > 0 || Object.keys(forecast.by_category || {}).length > 0);
-
-  // If budget report ran successfully (no error), use its goal_cards
-  const hasFullReport = !!report && !report.error && report.goal_cards?.length > 0;
-  const goalCards = hasFullReport ? report.goal_cards : [];
-  const impacts = report.behavioural_goal_impacts || [];
-  const budgetSummary = report.budget_summary || {};
-
-  // Compute client-side metrics when we have analysis forecast + live profile
-  const forecastTotal = forecast.total || 0;
-  const computedSurplus = hasProfile ? liveIncome - forecastTotal : 0;
-  const surplusHealth = computedSurplus > liveIncome * 0.3 ? 'strong' : computedSurplus > 0 ? 'tight' : 'negative';
 
   if (loading) {
     return (
@@ -228,7 +233,11 @@ export default function BudgetGoals() {
   const displayHealth = hasFullReport ? (budgetSummary.surplus_health || 'unknown') : surplusHealth;
   const displayVerdict = hasFullReport
     ? (budgetSummary.one_line_verdict || "Financial Trajectory & Goal Optimization")
-    : hasAnalysisData
+    : hasIncome
+      ? shouldPromptForGoals
+        ? `Your surplus is ₹${Math.round(computedSurplus).toLocaleString()}/mo — add goals to project timelines.`
+        : `Your surplus is ₹${Math.round(computedSurplus).toLocaleString()}/mo — ${computedSurplus > 0 ? 'goals are achievable' : 'spending exceeds income'}.`
+      : hasAnalysisData
       ? `Your surplus is ₹${Math.round(computedSurplus).toLocaleString()}/mo — ${computedSurplus > 0 ? 'goals are achievable' : 'spending exceeds income'}.`
       : "Upload a statement to unlock spend forecasts and optimization.";
 
@@ -277,7 +286,7 @@ export default function BudgetGoals() {
         </div>
       </div>
 
-      {report && report.error && (
+      {report && report.error && !isProfileMissingOnlyGoals && (
         <div className="mb-8 bg-status-danger/10 border border-status-danger/20 p-4 rounded-xl flex items-start gap-3 text-status-danger shadow-soft">
           <span className="material-symbols-outlined text-[20px] shrink-0">warning</span>
           <div>
@@ -287,7 +296,7 @@ export default function BudgetGoals() {
         </div>
       )}
 
-      {!hasAnalysisData && hasProfile && (
+      {!hasAnalysisData && hasIncome && (
         <div className="mb-12 p-10 border-2 border-dashed border-border-light rounded-[40px] text-center bg-bg-subtle/30">
           <div className="w-16 h-16 rounded-3xl bg-bg-surface border border-border-light flex items-center justify-center mx-auto mb-6 shadow-soft">
              <span className="material-symbols-outlined text-accent text-[28px] fill-1">insights</span>
@@ -518,7 +527,7 @@ export default function BudgetGoals() {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({
-                    user_id: 'user_123',
+                    user_id: getUserId(),
                     name: editForm.name,
                     target_amount: parseFloat(editForm.target) || 0,
                     saved_amount: parseFloat(editForm.saved) || 0,

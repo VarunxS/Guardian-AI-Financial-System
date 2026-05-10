@@ -103,6 +103,8 @@ class GoalAgentRequest(BaseModel):
     """Request body for POST /api/goals/analyze to run the goal agent independently."""
     user_id: str
     api_key: str
+    provider: Optional[str] = None
+    model_id: Optional[str] = None
     budget_forecast: dict
     behavioural_impacts: list[dict] = []
 

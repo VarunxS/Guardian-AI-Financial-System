@@ -294,6 +294,23 @@ async def analyze_goals(request: GoalAgentRequest):
     loop = asyncio.get_event_loop()
     income = await loop.run_in_executor(None, _memory.get_user_income, request.user_id)
     goals = await loop.run_in_executor(None, _memory.get_active_goals, request.user_id)
+    api_key = request.api_key
+    provider = request.provider or "google"
+    model_id = request.model_id or "gemini-2.5-flash-lite"
+
+    try:
+        config = await _memory.get_provider_config(request.user_id)
+    except Exception as e:
+        logger.warning(f"Provider config lookup failed for {request.user_id}: {e}")
+        config = None
+
+    if config:
+        if not api_key:
+            api_key = config["api_key"]
+        if not request.provider:
+            provider = config["provider"]
+        if not request.model_id:
+            model_id = config["model_id"]
 
     try:
         report = await asyncio.wait_for(
@@ -303,8 +320,9 @@ async def analyze_goals(request: GoalAgentRequest):
                 [],  # transactions (not needed when forecast & impacts provided)
                 income,
                 goals,
-                request.api_key,
-                "openai",  # default provider
+                api_key,
+                provider,
+                model_id,
                 1,  # statement_months (not needed here)
                 request.budget_forecast,
                 request.behavioural_impacts

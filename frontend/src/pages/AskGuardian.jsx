@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { getUserId } from '../utils/auth';
+import { fetchStoredProviderConfig } from '../utils/providerConfig';
 import { API_BASE_URL } from '../config';
 
 export default function AskGuardian() {
@@ -79,9 +80,11 @@ export default function AskGuardian() {
     e?.preventDefault();
     if (!input.trim() || isLoading) return;
 
-    const apiKey = localStorage.getItem('GUARDIAN_API_KEY');
-    if (!apiKey) {
-      alert("Please enter your API Key in the Settings page first.");
+    let config;
+    try {
+      config = await fetchStoredProviderConfig();
+    } catch (err) {
+      alert(err.message || "Please enter your API Key in the Settings page first.");
       return;
     }
 
@@ -97,7 +100,9 @@ export default function AskGuardian() {
         body: JSON.stringify({
           question: userMessage,
           user_id: getUserId(),
-          api_key: apiKey
+          api_key: config.api_key,
+          provider: config.provider,
+          model_id: config.model_id
         })
       });
 

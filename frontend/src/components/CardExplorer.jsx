@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { API_BASE_URL } from '../config';
+import { fetchStoredProviderConfig } from '../utils/providerConfig';
 
 const TIER_COLORS = {
   super_premium: { bg: 'bg-gradient-to-br from-amber-500 to-yellow-600', text: 'text-amber-600', label: 'Super Premium', badge: 'bg-amber-100 text-amber-700 border-amber-200' },
@@ -46,12 +47,11 @@ export default function CardExplorer() {
     setSelectedCard(card);
     setLiveData(null);
     setLiveLoading(true);
-    const apiKey = localStorage.getItem('GUARDIAN_API_KEY');
-    if (!apiKey) { setLiveLoading(false); return; }
     try {
+      const config = await fetchStoredProviderConfig();
       const res = await fetch(`${API_BASE_URL}/api/card-explore`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ card_id: card.id, api_key: apiKey })
+        body: JSON.stringify({ card_id: card.id, api_key: config.api_key })
       });
       const data = await res.json();
       setLiveData(data);
