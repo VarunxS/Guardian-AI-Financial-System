@@ -181,6 +181,10 @@ class StatementParser:
         """Route to the correct parser based on source type. Falls back to LLM for tricky PDFs."""
         if source == "bank_csv":
             transactions = self._parse_bank_csv(file_path)
+            # LLM Fallback for tricky CSVs
+            if not transactions and api_key:
+                logger.info(f"[Parser] CSV patterns failed. Attempting LLM extraction...")
+                transactions = self._parse_with_llm(file_path, api_key, provider, model_id)
         elif source in ("credit_card_pdf", "upi_pdf"):
             transactions = self._parse_pdf(file_path)
             
@@ -272,7 +276,8 @@ class StatementParser:
                     identified["amount"] = col
 
         if not identified["date"] or (not identified["desc"] and len(df.columns) < 2):
-            raise ValueError(f"Could not identify required columns. Found: {list(df.columns)}")
+            logger.warning(f"Could not identify required columns in CSV: {list(df.columns)}")
+            return []
 
         # Step 3: Transaction Extraction
         transactions: list[Transaction] = []
@@ -323,12 +328,24 @@ class StatementParser:
     def _parse_with_llm(self, file_path: str, api_key: str, provider: str = "google", model_id: str = "gemini-2.5-flash-lite") -> list[Transaction]:
         """Extract transactions from PDF text using an LLM (OpenAI/Gemini)."""
         try:
-            # Extract raw text first
-            doc = fitz.open(file_path)
+            # Extract raw text (handle both PDF and plain text/CSV)
             raw_text = ""
-            for page in doc:
-                raw_text += page.get_text() + "\n"
-            doc.close()
+            if file_path.lower().endswith(".pdf"):
+                try:
+                    doc = fitz.open(file_path)
+                    for page in doc:
+                        raw_text += page.get_text() + "\n"
+                    doc.close()
+                except Exception:
+                    pass
+            
+            # If not a PDF or PDF extraction failed, try plain text
+            if not raw_text.strip():
+                try:
+                    with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+                        raw_text = f.read()
+                except Exception:
+                    pass
 
             if not raw_text.strip():
                 return []
