@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { getUserId } from '../utils/auth';
 import { API_BASE_URL } from '../config';
 
@@ -64,7 +65,11 @@ export default function UploadModal({ isOpen, onClose }) {
       return;
     }
 
-    const apiKey = localStorage.getItem('GUARDIAN_API_KEY') || "";
+    const apiKey = localStorage.getItem('GUARDIAN_API_KEY');
+    if (!apiKey) {
+      setError("API Provider not configured. Please go to Settings and enter your API Key first.");
+      return;
+    }
     localStorage.setItem('GUARDIAN_INCOME', monthlyIncome);
 
     setIsLoading(true);
@@ -227,7 +232,18 @@ export default function UploadModal({ isOpen, onClose }) {
               {error && (
                 <div className="p-5 rounded-2xl bg-status-danger/5 border border-status-danger/10 text-[13px] text-status-danger font-bold flex items-start gap-3">
                    <span className="material-symbols-outlined text-[18px]">error</span>
-                   <span>{error}</span>
+                   <div className="flex flex-col gap-3">
+                     <span>{error}</span>
+                     {error.includes("Settings") && (
+                       <Link 
+                         to="/settings" 
+                         onClick={onClose}
+                         className="bg-status-danger text-white px-6 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-status-danger/90 transition-all text-center"
+                       >
+                         Go to Settings
+                       </Link>
+                     )}
+                   </div>
                 </div>
               )}
 
