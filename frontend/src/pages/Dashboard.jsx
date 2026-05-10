@@ -121,18 +121,23 @@ export default function Dashboard() {
   const budgetReport = analysis?.budget_goals_report || analysis?.financial_consultant_report || {};
   const raw = budgetReport.raw || {};
   const forecast = raw.budget_forecast || { by_category: {}, total: 0 };
-  const liveIncome = profile.monthly_income || 0;
-  const liveGoals = profile.goals || [];
-  const hasLiveProfile = liveIncome > 0 && liveGoals.length > 0;
+  const incomeFromAnalysis = raw?.surplus?.monthly_income || raw?.monthly_income || 0;
+  const liveIncome = profile.monthly_income || incomeFromAnalysis || 0;
+  const liveGoals = (profile.goals && profile.goals.length > 0) ? profile.goals : (raw.goals || []);
+  const hasIncome = liveIncome > 0;
+  const hasGoals = liveGoals.length > 0;
+  const hasLiveProfile = hasIncome && hasGoals;
   const hasFullReport = !budgetReport.error && budgetReport.goal_cards?.length > 0;
-  // Only show "Context Required" if user truly has no profile
-  const isBudgetError = !hasLiveProfile && !hasFullReport;
+  const hasSurplusContext = hasIncome || hasFullReport;
+  const shouldPromptForGoals = hasIncome && !hasGoals && !hasFullReport;
+  // Only show "Context Required" if income is genuinely unavailable.
+  const isBudgetError = !hasSurplusContext;
   const computedSurplus = liveIncome - (forecast.total || 0);
   const computedHealth = computedSurplus > liveIncome * 0.3 ? 'strong' : computedSurplus > 0 ? 'tight' : 'negative';
   const budgetSummary = hasFullReport ? (budgetReport.budget_summary || {}) : {
     forecasted_surplus: computedSurplus,
     surplus_health: computedHealth,
-    one_line_verdict: hasLiveProfile ? `₹${Math.round(computedSurplus).toLocaleString()} monthly surplus detected.` : ''
+    one_line_verdict: hasIncome ? `₹${Math.round(computedSurplus).toLocaleString()} monthly surplus detected.` : ''
   };
   const categories = Object.entries(forecast.by_category)
     .filter(([cat]) => !['transfer', 'investment'].includes(cat))
@@ -170,7 +175,7 @@ export default function Dashboard() {
             <p className="text-[13px] text-text-body font-bold leading-relaxed opacity-60 max-w-xl">
               {(analysis.executive_summary && !analysis.executive_summary.toLowerCase().includes('provide income'))
                 ? analysis.executive_summary
-                : hasLiveProfile
+                : hasIncome
                   ? `₹${Math.round(computedSurplus).toLocaleString()} monthly surplus detected across ${Object.keys(forecast.by_category).length} spending categories.`
                   : "Automated analysis complete across 3 concurrent AI intelligence nodes."
               }
@@ -209,10 +214,10 @@ export default function Dashboard() {
                    </div>
                    <h3 className="text-[22px] font-black mb-3 tracking-tight">Context Required</h3>
                    <p className="text-[13px] text-white/60 font-bold mb-8 leading-relaxed">
-                     Guardian needs your income and goals to calculate your monthly surplus and reaching-date projections.
+                     Guardian needs your income to calculate your monthly surplus and goal timelines.
                    </p>
                    <Link to="/budget" className="bg-white text-text-ink px-8 py-3.5 rounded-[16px] text-[12px] font-black uppercase tracking-widest hover:bg-accent hover:text-white transition-all shadow-glow active:scale-95">
-                      Set Income & Goals
+                      Set Income
                    </Link>
                 </div>
               ) : (
@@ -235,7 +240,7 @@ export default function Dashboard() {
 
                   {/* Goal Progress Snapshots */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                    {liveGoals.map(g => ({
+                    {hasGoals ? liveGoals.map(g => ({
                       goal_name: g.name,
                       progress_pct: Math.round(((g.saved_amount || 0) / g.target_amount) * 100)
                     })).slice(0, 3).map((goal, idx) => (
@@ -252,7 +257,14 @@ export default function Dashboard() {
                            />
                         </div>
                       </div>
-                    ))}
+                    )) : (
+                      <div className="sm:col-span-3 bg-white/5 backdrop-blur-xl px-5 py-6 rounded-2xl border border-white/5 shadow-soft">
+                        <p className="text-[11px] uppercase font-black text-white/40 tracking-[0.1em] mb-2">Goal Timelines</p>
+                        <p className="text-[13px] text-white/75 font-bold leading-relaxed">
+                          Your surplus is ready. Add one or more goals to unlock timeline projections and acceleration tips.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </>
               )}
@@ -262,11 +274,13 @@ export default function Dashboard() {
               <div className="relative z-10 flex flex-col sm:flex-row justify-between items-end gap-6 pt-6 border-t border-white/10">
                  <div className="max-w-lg">
                    <p className="text-[13px] text-white/90 leading-relaxed font-bold italic opacity-80">
-                     "{budgetSummary.one_line_verdict || "Guardian is currently forecasting your next month's cashflow based on historical patterns."}"
+                     "{shouldPromptForGoals
+                        ? `₹${Math.round(computedSurplus).toLocaleString()} monthly surplus detected. Add goals to unlock reaching-date projections.`
+                        : (budgetSummary.one_line_verdict || "Guardian is currently forecasting your next month's cashflow based on historical patterns.")}"
                    </p>
                  </div>
                  <Link to="/budget" className="bg-white text-text-ink px-6 py-3 rounded-xl text-[12px] font-black uppercase tracking-widest hover:bg-accent hover:text-white transition-all shadow-glow active:scale-95 flex items-center gap-3 shrink-0">
-                    Strategy Hub <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
+                    {shouldPromptForGoals ? 'Add Goals' : 'Strategy Hub'} <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
                  </Link>
               </div>
             )}
