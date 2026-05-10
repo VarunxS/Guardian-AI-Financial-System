@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
+import { getUserId } from '../utils/auth';
 
 export default function AskGuardian() {
   const [messages, setMessages] = useState(() => {
@@ -94,7 +95,7 @@ export default function AskGuardian() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           question: userMessage,
-          user_id: 'user_123',
+          user_id: getUserId(),
           api_key: apiKey
         })
       });

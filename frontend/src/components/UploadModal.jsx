@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getUserId } from '../utils/auth';
 
 export default function UploadModal({ isOpen, onClose }) {
   const [file, setFile] = useState(null);
@@ -75,7 +76,7 @@ export default function UploadModal({ isOpen, onClose }) {
         formData.append('source', source);
         formData.append('statement_months', statementMonths.toString());
     }
-    formData.append('user_id', 'user_123');
+    formData.append('user_id', getUserId());
     formData.append('use_sample', isSample ? 'true' : 'false');
     formData.append('monthly_income', monthlyIncome.toString());
     if (apiKey) formData.append('api_key', apiKey);

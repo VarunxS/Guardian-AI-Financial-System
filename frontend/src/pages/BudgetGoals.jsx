@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import UploadModal from '../components/UploadModal';
+import { getUserId } from '../utils/auth';
 
 export default function BudgetGoals() {
   const [analysis, setAnalysis] = useState(null);
@@ -18,7 +19,7 @@ export default function BudgetGoals() {
 
   const fetchProfile = async () => {
     try {
-      const res = await fetch('http://localhost:8000/api/user/user_123/context');
+      const res = await fetch(`http://localhost:8000/api/user/${getUserId()}/context`);
       const data = await res.json();
       setProfile(data);
     } catch (err) { console.error(err); }
@@ -37,7 +38,7 @@ export default function BudgetGoals() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          user_id: 'user_123',
+          user_id: getUserId(),
           goal_id: editGoal.goal_id,
           name: editForm.name,
           target_amount: parseFloat(editForm.target) || 0,
@@ -96,7 +97,7 @@ export default function BudgetGoals() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          user_id: 'user_123',
+          user_id: getUserId(),
           api_key: apiKey,
           budget_forecast: forecast,
           behavioural_impacts: analysis?.budget_goals_report?.raw?.behavioural_impacts || []

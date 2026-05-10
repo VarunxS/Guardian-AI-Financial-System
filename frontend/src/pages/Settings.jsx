@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getUserId } from '../utils/auth';
 
 const PROVIDERS = {
     "google": {
@@ -69,7 +70,7 @@ export default function Settings() {
 
   const fetchConfig = async () => {
     try {
-      const res = await fetch('http://localhost:8000/api/settings/config/user_123');
+      const res = await fetch(`http://localhost:8000/api/settings/config/${getUserId()}`);
       const data = await res.json();
       
       if (data.db_error) {
@@ -137,7 +138,7 @@ export default function Settings() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          user_id: 'user_123',
+          user_id: getUserId(),
           provider: selectedProvider,
           model_id: finalModel,
           api_key: apiKey,
@@ -169,7 +170,7 @@ export default function Settings() {
       const res = await fetch('http://localhost:8000/api/user/purge', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: 'user_123' })
+        body: JSON.stringify({ user_id: getUserId() })
       });
       
       if (!res.ok) throw new Error('Failed to purge data');

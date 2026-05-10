@@ -67,4 +67,14 @@ Guardian uses a **Supervisor Agent** to coordinate between specialized nodes:
 
 ---
 
+## 🌐 Deployment & Multi-Tenancy
+
+Guardian is architected for easy public deployment. You don't need your users to set up their own databases. 
+
+*   **Session-Based Isolation**: The app automatically generates a unique `userId` for every new browser session. This ensures that multiple users can use the same hosted instance simultaneously without their data ever touching or clashing.
+*   **Centralized Database**: As the owner, you simply provide your `SUPABASE_URL` and `SUPABASE_KEY` in the environment variables of your hosting provider (e.g., Vercel, Railway, Render). 
+*   **Zero-Login UX**: Visitors can immediately start analyzing their finances without creating an account, while still enjoying a private, isolated environment for their data.
+
+---
+
 Built with ❤️ for financial freedom.
